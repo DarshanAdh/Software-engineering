@@ -1,0 +1,174 @@
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Menu, X, Car, LogOut, Shield } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  const getNavItems = () => {
+    const baseItems = [
+      { name: 'Home', path: '/' },
+      { name: 'How It Works', path: '/#how-it-works' },
+    ];
+
+    if (isAuthenticated) {
+      if (user?.userType === 'helper') {
+        return [
+          ...baseItems,
+          { name: 'Dashboard', path: '/helper-dashboard' }
+        ];
+      } else {
+        return [
+          ...baseItems,
+          { name: 'Dashboard', path: '/dashboard' },
+          { name: 'Request Help', path: '/request' }
+        ];
+      }
+    }
+
+    return baseItems;
+  };
+
+  const navItems = getNavItems();
+
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-blue-900/80 backdrop-blur-md shadow-sm' : 'bg-transparent'
+      }`}
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between py-4">
+          <Link to="/" className="flex items-center space-x-2">
+
+            <span className="text-xl font-semibold tracking-tight flex items-center text-white">
+              Roadside Relief
+              <Shield className="ml-2 h-4 w-4 text-accent" />
+            </span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`nav-link text-white ${
+                  location.pathname === item.path ? 'text-accent after:scale-x-100' : ''
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center space-x-4">
+            {isAuthenticated ? (
+              <>
+                {user?.userType === 'customer' && (
+                  <Button asChild className="mr-2 bg-accent hover:bg-accent/90">
+                    <Link to="/request">Need Help?</Link>
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  className="text-white hover:text-accent"
+                  onClick={logout}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button asChild variant="ghost" className="text-white hover:text-accent">
+                  <Link to="/login">Sign In</Link>
+                </Button>
+                <Button asChild className="bg-accent hover:bg-accent/90">
+                  <Link to="/login">Need Help?</Link>
+                </Button>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Navigation Toggle */}
+          <button
+            className="md:hidden p-2 rounded-md text-white hover:bg-accent/80 transition-colors"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Menu - Simplified */}
+      <div
+        className={`md:hidden fixed inset-0 top-[69px] bg-blue-900/95 transition-transform duration-300 ease-in-out z-40 transform ${
+          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <nav className="flex flex-col p-6 space-y-6">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className="text-lg font-medium text-white hover:text-accent transition-colors"
+            >
+              {item.name}
+            </Link>
+          ))}
+          <hr className="border-t border-border my-4" />
+
+          {isAuthenticated ? (
+            <>
+              {user?.userType === 'customer' && (
+                <Button asChild className="w-full bg-accent hover:bg-accent/90">
+                  <Link to="/request">
+                    <Car size={18} className="mr-2" />
+                    Need Help?
+                  </Link>
+                </Button>
+              )}
+              <Button variant="outline" className="w-full text-white border-white/30 hover:bg-blue-800/50" onClick={logout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Log Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild className="w-full bg-accent hover:bg-accent/90">
+                <Link to="/request">
+                  <Car size={18} className="mr-2" />
+                  Need Help?
+                </Link>
+              </Button>
+              <Button variant="outline" className="w-full text-white border-white/30 hover:bg-blue-800/50" asChild>
+                <Link to="/login">Sign In</Link>
+              </Button>
+            </>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
