@@ -104,7 +104,7 @@ const Dashboard = () => {
       const requestsData = await response.json();
 
       // Filter active requests (pending, accepted, inProgress)
-      const activeReqs = requestsData.filter((req: Request) =>
+      const activeReqs = requestsData.filter((req: Request) => 
         ['pending', 'accepted', 'inProgress'].includes(req.status)
       );
 
@@ -135,7 +135,7 @@ const Dashboard = () => {
       }
 
       toast.success(`Request ${status === 'cancelled' ? 'cancelled' : 'updated'} successfully`);
-
+      
       // Update local state
       fetchRequests();
     } catch (error) {
@@ -168,7 +168,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-900/80 to-green-900/50">
       <Navbar />
-
+      
       <main className="flex-grow pt-24 pb-10">
         <div className="container mx-auto px-4 py-8 text-white">
           <div className="mb-6">
@@ -262,7 +262,7 @@ const Dashboard = () => {
           </div>
         </div>
       </main>
-
+      
       <Footer />
     </div>
   );

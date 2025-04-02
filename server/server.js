@@ -74,6 +74,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/helpers', require('./routes/helpers'));
 app.use('/api/requests', require('./routes/requests'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/earnings', require('./routes/earnings'));
 // ... other routes
 
 // Error handling middleware

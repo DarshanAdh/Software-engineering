@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { MapPin, Clock, PhoneCall, MessageSquare, Car, DollarSign, Star } from 'lucide-react';
 import { API_ENDPOINTS } from '@/config/api';
+import PastEarnings from '../components/helper/PastEarnings';
 
 const HelperDashboard = () => {
   const navigate = useNavigate();
@@ -20,12 +21,7 @@ const HelperDashboard = () => {
   const [pastRequests, setPastRequests] = useState<any[]>([]);
   const [isAvailable, setIsAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [earnings, setEarnings] = useState({
-    today: 0,
-    week: 0,
-    month: 0,
-    total: 0
-  });
+  // Earnings state removed as it's no longer needed
 
   useEffect(() => {
     // Check if user is logged in as helper
@@ -91,17 +87,7 @@ const HelperDashboard = () => {
           setPastRequests(historyData.filter((req: any) => ['completed', 'cancelled'].includes(req.status)));
         }
 
-        // Fetch earnings data
-        const earningsResponse = await fetch(`${API_ENDPOINTS.helper.earnings}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (earningsResponse.ok) {
-          const earningsData = await earningsResponse.json();
-          setEarnings(earningsData);
-        }
+        // Earnings fetch code removed as it's no longer needed
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error("Failed to load dashboard data. Please try again.");
@@ -249,7 +235,7 @@ const HelperDashboard = () => {
 
       <main className="flex-grow pt-24 pb-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
             <div>
               <h1 className="text-3xl font-bold mb-2 text-white">Helper Dashboard</h1>
               <p className="text-white/80">Welcome back, {user?.fullName || 'Helper'}</p>
@@ -281,67 +267,22 @@ const HelperDashboard = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-white/90 backdrop-blur-sm border-blue-200 shadow-lg">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-blue-800">Today's Earnings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">${earnings.today.toFixed(2)}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/90 backdrop-blur-sm border-blue-200 shadow-lg">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-blue-800">This Week</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">${earnings.week.toFixed(2)}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/90 backdrop-blur-sm border-blue-200 shadow-lg">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-blue-800">This Month</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">${earnings.month.toFixed(2)}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/90 backdrop-blur-sm border-blue-200 shadow-lg">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-blue-800">Total Earnings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">${earnings.total.toFixed(2)}</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
           <Tabs defaultValue="available" className="w-full">
-            <TabsList className="mb-4 w-full max-w-md mx-auto grid grid-cols-3 bg-blue-100">
+            <TabsList className="mb-4 w-full max-w-md mx-auto grid grid-cols-4 bg-blue-100">
               <TabsTrigger value="available" className="data-[state=active]:bg-accent data-[state=active]:text-white">
-                Available Requests
+                Available
                 {availableRequests.length > 0 && (
                   <Badge variant="secondary" className="ml-2">{availableRequests.length}</Badge>
                 )}
               </TabsTrigger>
               <TabsTrigger value="active" className="data-[state=active]:bg-accent data-[state=active]:text-white">
-                Active Jobs
+                Active
                 {activeRequests.length > 0 && (
                   <Badge variant="secondary" className="ml-2">{activeRequests.length}</Badge>
                 )}
               </TabsTrigger>
               <TabsTrigger value="history" className="data-[state=active]:bg-accent data-[state=active]:text-white">History</TabsTrigger>
+              <TabsTrigger value="past-earnings" className="data-[state=active]:bg-accent data-[state=active]:text-white">Past Earnings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="available">
@@ -582,6 +523,12 @@ const HelperDashboard = () => {
                   ))
                 )}
               </div>
+            </TabsContent>
+
+
+
+            <TabsContent value="past-earnings">
+              <PastEarnings />
             </TabsContent>
           </Tabs>
         </div>

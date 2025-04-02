@@ -6,6 +6,10 @@
   "scripts": {
     "dev": "rm -rf node_modules/.vite && vite",
     "dev:clean": "rm -rf node_modules/.vite && rm -rf dist && vite",
+    "server": "cd server && npm run dev",
+    "client": "rm -rf node_modules/.vite && vite",
+    "start": "npm run dev:concurrent",
+    "dev:concurrent": "concurrently \"npm run server\" \"npm run client\"",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -23,6 +27,7 @@
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@tanstack/react-query": "^5.69.0",
+    "@types/leaflet": "^1.9.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.1.1",
@@ -32,7 +37,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.50.1",
-    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.22.1",
     "sonner": "^1.4.0",
     "tailwind-merge": "^2.2.1",
@@ -40,7 +44,6 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.17",
     "@types/node": "^20.11.19",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
@@ -48,6 +51,7 @@
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.17",
+    "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
