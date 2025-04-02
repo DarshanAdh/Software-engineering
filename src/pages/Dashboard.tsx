@@ -171,9 +171,8 @@ const Dashboard = () => {
 
       <main className="flex-grow pt-24 pb-10">
         <div className="container mx-auto px-4 py-8 text-white">
-          <div className="flex justify-between items-center mb-6">
+          <div className="mb-6">
             <h1 className="text-3xl font-bold text-white">My Requests</h1>
-            <Button onClick={() => navigate('/request')} className="bg-accent hover:bg-accent/90">Request Help</Button>
           </div>
 
           {/* Active Requests Section */}

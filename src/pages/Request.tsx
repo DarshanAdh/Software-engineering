@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import RequestForm from '@/components/request/RequestForm';
@@ -7,6 +7,7 @@ import Map from '@/components/map/Map';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Request = () => {
+  const [mapLocation, setMapLocation] = useState<{ latitude: number; longitude: number; address: string } | null>(null);
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
@@ -15,7 +16,7 @@ const Request = () => {
   return (
     <div className="min-h-screen flex flex-col page-transition">
       <Navbar />
-      
+
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
@@ -23,23 +24,27 @@ const Request = () => {
               <h1 className="text-3xl font-bold tracking-tight mb-2">Request Roadside Assistance</h1>
               <p className="text-muted-foreground">Get help right where you need it, when you need it</p>
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="glass-card p-6">
-                <RequestForm />
+                <RequestForm onLocationSelect={(location) => setMapLocation(location)} />
               </div>
-              
+
               <div className="glass-card p-6 lg:sticky lg:top-24 h-[500px] lg:h-[calc(100vh-200px)]">
                 <Tabs defaultValue="map" className="h-full flex flex-col">
                   <TabsList className="mb-4 w-full">
                     <TabsTrigger value="map" className="flex-1">Map View</TabsTrigger>
                     <TabsTrigger value="pricing" className="flex-1">Pricing</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="map" className="flex-1 overflow-hidden">
-                    <Map />
+                    <Map
+                      latitude={mapLocation?.latitude}
+                      longitude={mapLocation?.longitude}
+                      address={mapLocation?.address}
+                    />
                   </TabsContent>
-                  
+
                   <TabsContent value="pricing" className="flex-1 overflow-y-auto p-2">
                     <div className="space-y-6">
                       <div>
@@ -48,7 +53,7 @@ const Request = () => {
                           We believe in fair and transparent pricing. The price you see is the price you pay.
                         </p>
                       </div>
-                      
+
                       <div className="space-y-4">
                         <div className="p-4 border border-border rounded-lg">
                           <div className="flex justify-between mb-1">
@@ -59,7 +64,7 @@ const Request = () => {
                             Replace your flat tire with your spare tire
                           </p>
                         </div>
-                        
+
                         <div className="p-4 border border-border rounded-lg">
                           <div className="flex justify-between mb-1">
                             <span className="font-medium">Battery Jump-Start</span>
@@ -69,7 +74,7 @@ const Request = () => {
                             Jump-start your vehicle's dead battery
                           </p>
                         </div>
-                        
+
                         <div className="p-4 border border-border rounded-lg">
                           <div className="flex justify-between mb-1">
                             <span className="font-medium">Lockout Assistance</span>
@@ -79,7 +84,7 @@ const Request = () => {
                             Help when you're locked out of your vehicle
                           </p>
                         </div>
-                        
+
                         <div className="p-4 border border-border rounded-lg">
                           <div className="flex justify-between mb-1">
                             <span className="font-medium">Fuel Delivery</span>
@@ -89,7 +94,7 @@ const Request = () => {
                             Emergency fuel delivery when you run out (fuel cost not included)
                           </p>
                         </div>
-                        
+
                         <div className="p-4 border border-border rounded-lg">
                           <div className="flex justify-between mb-1">
                             <span className="font-medium">Minor Mechanical Help</span>
@@ -100,7 +105,7 @@ const Request = () => {
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="text-sm text-muted-foreground">
                         <p>* Additional fees may apply for services between 10pm and 6am.</p>
                         <p>* Prices may vary based on location and complexity of the service required.</p>
@@ -113,7 +118,7 @@ const Request = () => {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

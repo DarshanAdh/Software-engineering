@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import type { JSX } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -21,6 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { userAPI } from '@/services/api';
+import LocationPicker from '@/components/ui/map/LocationPicker';
 
 interface ServiceType {
   id: 'tow' | 'fuel' | 'tire' | 'battery' | 'lockout' | 'other';
@@ -45,25 +45,34 @@ const userInfoSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   phone: z.string().min(10, "Valid phone number is required"),
   address: z.string().min(5, "Location is required"),
+  latitude: z.number(),
+  longitude: z.number(),
   vehicle: z.string().min(3, "Vehicle information is required"),
   details: z.string().optional(),
 });
 
 type UserInfoValues = z.infer<typeof userInfoSchema>;
 
-const RequestForm = () => {
+interface RequestFormProps {
+  onLocationSelect?: (location: { latitude: number; longitude: number; address: string }) => void;
+}
+
+const RequestForm = ({ onLocationSelect }: RequestFormProps) => {
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<{ fullName: string; phone: string } | null>(null);
+  const [location, setLocation] = useState<{ latitude: number; longitude: number; address: string } | null>(null);
   const navigate = useNavigate();
-  
+
   const form = useForm<UserInfoValues>({
     resolver: zodResolver(userInfoSchema),
     defaultValues: {
       fullName: "",
       phone: "",
       address: "",
+      latitude: 0,
+      longitude: 0,
       vehicle: "",
       details: "",
     },
@@ -85,7 +94,7 @@ const RequestForm = () => {
         console.error('Error fetching user profile:', error);
       }
     };
-    
+
     fetchUserProfile();
   }, [form]);
 
@@ -129,7 +138,7 @@ const RequestForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (step === 1 && selectedService) {
       setStep(2);
       return;
@@ -138,7 +147,7 @@ const RequestForm = () => {
 
   const onSubmitUserInfo = async (data: UserInfoValues) => {
     setLoading(true);
-    
+
     try {
       // Get token from localStorage
       const token = localStorage.getItem('token');
@@ -149,7 +158,7 @@ const RequestForm = () => {
         navigate('/login');
         return;
       }
-      
+
       // Check if user is a customer
       const tokenPayload = JSON.parse(atob(token.split('.')[1]));
       if (tokenPayload.userType !== 'customer') {
@@ -159,7 +168,7 @@ const RequestForm = () => {
         navigate('/dashboard');
         return;
       }
-      
+
       // Get selected service
       const selectedService = getSelectedService();
       if (!selectedService) {
@@ -168,7 +177,7 @@ const RequestForm = () => {
         setLoading(false);
         return;
       }
-      
+
       // Map the service name to the enum value
       const serviceType = serviceNameToEnum[selectedService.name];
       if (!serviceType) {
@@ -177,30 +186,30 @@ const RequestForm = () => {
         setLoading(false);
         return;
       }
-      
+
       // Prepare request data
       const requestData = {
         serviceType,
         description: data.details || `Help needed with ${selectedService.name}`,
         location: {
           type: 'Point' as const,
-          coordinates: [0, 0] as [number, number],
+          coordinates: [data.longitude, data.latitude] as [number, number],
           address: data.address
         },
         isUrgent: false,
         estimatedPrice: selectedService.price,
         vehicle: data.vehicle
       };
-      
+
       console.log("Submitting request with data:", requestData);
-      
+
       // Use the API service to create the request
       const result = await requestAPI.createRequest(requestData);
       console.log("Request created successfully:", result);
-      
+
       toast.success("Help request submitted successfully! An assistant will be assigned shortly.");
       setStep(3);
-      
+
       // Redirect to dashboard after 3 seconds
       setTimeout(() => {
         navigate('/dashboard');
@@ -212,7 +221,7 @@ const RequestForm = () => {
         response: error.response,
         status: error.status
       });
-      
+
       // Handle specific error cases
       if (error.status === 401) {
         toast.error("Your session has expired. Please login again.");
@@ -247,24 +256,7 @@ const RequestForm = () => {
     return serviceTypes.find(service => service.id === selectedService);
   };
 
-  const handleUseCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // This would typically call a reverse geocoding API to get the address
-          // For now, we'll just set the coordinates
-          const location = `Lat: ${position.coords.latitude.toFixed(6)}, Long: ${position.coords.longitude.toFixed(6)}`;
-          form.setValue("address", location);
-          toast.success("Location detected!");
-        },
-        () => {
-          toast.error("Unable to get your location. Please enter it manually.");
-        }
-      );
-    } else {
-      toast.error("Geolocation is not supported by your browser.");
-    }
-  };
+  // The handleUseCurrentLocation function is no longer needed as LocationPicker handles this
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -321,7 +313,7 @@ const RequestForm = () => {
               <h2 className="text-2xl font-semibold tracking-tight">Your Information</h2>
               <p className="text-muted-foreground">Please provide your details so we can help you</p>
             </div>
-            
+
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -330,28 +322,9 @@ const RequestForm = () => {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter your full name" 
-                        {...field} 
-                        readOnly={!!userProfile}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="tel" 
-                        placeholder="Enter your phone number" 
-                        {...field} 
+                      <Input
+                        placeholder="Enter your full name"
+                        {...field}
                         readOnly={!!userProfile}
                       />
                     </FormControl>
@@ -362,26 +335,45 @@ const RequestForm = () => {
 
               <FormField
                 control={form.control}
-                name="address"
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Your Location</FormLabel>
+                    <FormLabel>Phone Number</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your current location" {...field} />
+                      <Input
+                        type="tel"
+                        placeholder="Enter your phone number"
+                        {...field}
+                        readOnly={!!userProfile}
+                      />
                     </FormControl>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full mt-1 text-sm"
-                      onClick={handleUseCurrentLocation}
-                    >
-                      Use my current location
-                    </Button>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <div className="space-y-2">
+                <Label>Your Location</Label>
+                <LocationPicker
+                  onLocationSelect={(loc) => {
+                    setLocation(loc);
+                    form.setValue('address', loc.address);
+                    form.setValue('latitude', loc.latitude);
+                    form.setValue('longitude', loc.longitude);
+
+                    // Pass location to parent component if callback is provided
+                    if (onLocationSelect) {
+                      onLocationSelect(loc);
+                    }
+                  }}
+                  initialLocation={location || undefined}
+                />
+                {form.formState.errors.address && (
+                  <p className="text-sm font-medium text-destructive mt-2">
+                    {form.formState.errors.address.message}
+                  </p>
+                )}
+              </div>
 
               <FormField
                 control={form.control}
@@ -404,9 +396,9 @@ const RequestForm = () => {
                   <FormItem>
                     <FormLabel>Additional Details</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Any specific details that might help the responder"
-                        className="min-h-[100px]" 
+                        className="min-h-[100px]"
                         {...field}
                       />
                     </FormControl>
@@ -451,22 +443,22 @@ const RequestForm = () => {
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
             <Car size={32} className="text-primary" />
           </div>
-          
+
           <div className="space-y-2">
             <h2 className="text-2xl font-semibold tracking-tight">Help is on the way!</h2>
             <p className="text-muted-foreground">We're finding you the closest available assistant.</p>
           </div>
-          
+
           <div className="space-y-1">
             <div className="text-sm text-muted-foreground">Your requested service:</div>
             <div className="font-medium">{getSelectedService()?.name}</div>
             <div className="text-primary">${getSelectedService()?.price.toFixed(2)}</div>
           </div>
-          
+
           <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
             <div className="h-full bg-primary origin-left animate-[loader_2s_ease-in-out_infinite]" style={{ width: '30%' }}></div>
           </div>
-          
+
           <p className="text-sm text-muted-foreground">Please keep this page open to see when an assistant accepts.</p>
         </div>
       )}
