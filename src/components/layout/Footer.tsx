@@ -7,36 +7,36 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-blue-900 border-t border-blue-800 py-12 text-white">
+    <footer className="bg-blue-900/80 backdrop-blur-sm border-t border-blue-800 py-6 text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-accent">Roadside Relief</h3>
-            <p className="text-white/80 text-sm max-w-xs">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-accent">Roadside Relief</h3>
+            <p className="text-white/80 text-xs max-w-xs">
               Connecting stranded drivers with nearby helpers for quick roadside assistance.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-2">
               <a href="#" className="text-white/80 hover:text-accent transition-colors">
-                <Twitter size={18} />
+                <Twitter size={14} />
               </a>
               <a href="#" className="text-white/80 hover:text-accent transition-colors">
-                <Facebook size={18} />
+                <Facebook size={14} />
               </a>
               <a href="#" className="text-white/80 hover:text-accent transition-colors">
-                <Instagram size={18} />
+                <Instagram size={14} />
               </a>
               <a href="#" className="text-white/80 hover:text-accent transition-colors">
-                <Linkedin size={18} />
+                <Linkedin size={14} />
               </a>
               <a href="#" className="text-white/80 hover:text-accent transition-colors">
-                <Github size={18} />
+                <Github size={14} />
               </a>
             </div>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-accent">Services</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-sm font-semibold mb-2 text-accent">Services</h3>
+            <ul className="space-y-1 text-xs">
               <li>
                 <Link to="/request" className="text-white/80 hover:text-accent transition-colors">
                   Flat Tire Assistance
@@ -66,8 +66,8 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-accent">Company</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-sm font-semibold mb-2 text-accent">Company</h3>
+            <ul className="space-y-1 text-xs">
               <li>
                 <Link to="/profile" className="text-white/80 hover:text-accent transition-colors">
                   About Us
@@ -97,8 +97,8 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-accent">Legal</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-sm font-semibold mb-2 text-accent">Legal</h3>
+            <ul className="space-y-1 text-xs">
               <li>
                 <Link to="#" className="text-white/80 hover:text-accent transition-colors">
                   Terms of Service
@@ -123,8 +123,8 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-blue-800 text-center">
-          <p className="text-sm text-white/70">
+        <div className="mt-6 pt-4 border-t border-blue-800 text-center">
+          <p className="text-xs text-white/70">
             © {currentYear} Roadside Relief. All rights reserved.
           </p>
         </div>

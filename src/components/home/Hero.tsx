@@ -17,13 +17,14 @@ const Hero = () => {
   return (
     <div className="relative overflow-hidden pt-16 pb-16 min-h-screen" style={{
       backgroundImage: 'url(/tire.jpg)',
-      backgroundSize: 'cover',
+      backgroundSize: '100% 100%',
       backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed'
     }}>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
+        <div className="flex flex-col items-center text-center max-w-xl mx-auto backdrop-blur-sm bg-blue-900/20 p-6 rounded-lg border border-blue-300/20">
           <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-300 bg-blue-900/80 text-sm text-blue-300 mb-6 animate-slide-up opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
             <Shield className="mr-2 h-4 w-4 text-green-400" />
             Trusted roadside assistance
