@@ -18,12 +18,13 @@ const HowItWorksPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{
-      backgroundImage: 'url(/1.webp)',
+    <div className="min-h-screen flex flex-col high-quality-image" style={{
+      backgroundImage: 'url(/img.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed'
+      backgroundAttachment: 'fixed',
+      imageRendering: 'high-quality'
     }}>
       <Navbar />
 
@@ -31,7 +32,7 @@ const HowItWorksPage = () => {
         {/* Hero Section */}
         <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-20 min-h-screen">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="flex flex-col items-center text-center max-w-3xl mx-auto backdrop-blur-sm bg-blue-900/30 p-8 rounded-lg border border-blue-300/20">
+            <div className="flex flex-col items-center text-center max-w-3xl mx-auto backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 shadow-xl">
               <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-300 bg-blue-900/80 text-sm text-blue-300 mb-6 animate-slide-up opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                 <Shield className="mr-2 h-4 w-4 text-green-400" />
                 Roadside Assistance Guide
@@ -50,19 +51,19 @@ const HowItWorksPage = () => {
         </section>
 
         {/* How It Works Component */}
-        <div className="backdrop-blur-sm bg-blue-900/30 p-8 rounded-lg border border-blue-300/20 my-8 mx-4">
+        <div className="backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 my-8 mx-4 shadow-xl">
           <HowItWorksComponent />
         </div>
 
         {/* Features Section */}
-        <div className="backdrop-blur-sm bg-blue-900/30 p-8 rounded-lg border border-blue-300/20 my-8 mx-4">
+        <div className="backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 my-8 mx-4 shadow-xl">
           <Features />
         </div>
 
         {/* Compact Features Section */}
         <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-20 min-h-screen">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 backdrop-blur-sm bg-blue-900/30 p-8 rounded-lg border border-blue-300/20">
+            <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 shadow-xl">
               <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-300 bg-blue-900/80 text-sm text-blue-300 mb-6">
                 <Shield className="mr-2 h-4 w-4 text-green-400" />
                 Why Choose Us
@@ -102,14 +103,14 @@ const HowItWorksPage = () => {
         </section>
 
         {/* Testimonials Section */}
-        <div className="backdrop-blur-sm bg-blue-900/30 p-8 rounded-lg border border-blue-300/20 my-8 mx-4">
+        <div className="backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 my-8 mx-4 shadow-xl">
           <Testimonials />
         </div>
 
         {/* Additional Testimonials Section */}
         <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-20 min-h-screen">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 backdrop-blur-sm bg-blue-900/30 p-8 rounded-lg border border-blue-300/20">
+            <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 shadow-xl">
               <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-300 bg-blue-900/80 text-sm text-blue-300 mb-6">
                 <Shield className="mr-2 h-4 w-4 text-green-400" />
                 Testimonials
@@ -159,7 +160,7 @@ const HowItWorksPage = () => {
         {/* CTA Section */}
         <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-20 min-h-screen">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="flex flex-col items-center text-center max-w-3xl mx-auto backdrop-blur-sm bg-blue-900/30 p-8 rounded-lg border border-blue-300/20">
+            <div className="flex flex-col items-center text-center max-w-3xl mx-auto backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 shadow-xl">
               <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-300 bg-blue-900/80 text-sm text-blue-300 mb-6 animate-slide-up opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                 <Shield className="mr-2 h-4 w-4 text-green-400" />
                 Get Started Today

@@ -209,6 +209,14 @@
     line-height: 1.4;
     font-size: 14px;
   }
+
+  /* High-quality image rendering */
+  .high-quality-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: bicubic;
+    backface-visibility: hidden;
+  }
 }
 
 /* Smooth scrolling and improved font rendering */
