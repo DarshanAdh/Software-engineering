@@ -82,30 +82,18 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
-              <>
-                {user?.userType === 'customer' && (
-                  <Button asChild className="mr-2 bg-accent hover:bg-accent/90">
-                    <Link to="/request">Need Help?</Link>
-                  </Button>
-                )}
-                <Button
-                  variant="ghost"
-                  className="text-blue-300 hover:text-green-400"
-                  onClick={logout}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log Out
-                </Button>
-              </>
+              <Button
+                variant="ghost"
+                className="text-blue-300 hover:text-green-400"
+                onClick={logout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Log Out
+              </Button>
             ) : (
-              <>
-                <Button asChild variant="ghost" className="text-blue-300 hover:text-green-400">
-                  <Link to="/login">Sign In</Link>
-                </Button>
-                <Button asChild className="bg-accent hover:bg-accent/90">
-                  <Link to="/login">Need Help?</Link>
-                </Button>
-              </>
+              <Button asChild variant="ghost" className="text-blue-300 hover:text-green-400">
+                <Link to="/login">Sign In</Link>
+              </Button>
             )}
           </div>
 
@@ -138,32 +126,14 @@ const Navbar = () => {
           <hr className="border-t border-border my-4" />
 
           {isAuthenticated ? (
-            <>
-              {user?.userType === 'customer' && (
-                <Button asChild className="w-full bg-accent hover:bg-accent/90">
-                  <Link to="/request">
-                    <Car size={18} className="mr-2" />
-                    Need Help?
-                  </Link>
-                </Button>
-              )}
-              <Button variant="outline" className="w-full text-blue-300 border-blue-300/30 hover:bg-blue-800/50" onClick={logout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Log Out
-              </Button>
-            </>
+            <Button variant="outline" className="w-full text-blue-300 border-blue-300/30 hover:bg-blue-800/50" onClick={logout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Log Out
+            </Button>
           ) : (
-            <>
-              <Button asChild className="w-full bg-accent hover:bg-accent/90">
-                <Link to="/request">
-                  <Car size={18} className="mr-2" />
-                  Need Help?
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full text-blue-300 border-blue-300/30 hover:bg-blue-800/50" asChild>
-                <Link to="/login">Sign In</Link>
-              </Button>
-            </>
+            <Button variant="outline" className="w-full text-blue-300 border-blue-300/30 hover:bg-blue-800/50" asChild>
+              <Link to="/login">Sign In</Link>
+            </Button>
           )}
         </nav>
       </div>
