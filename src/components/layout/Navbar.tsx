@@ -26,7 +26,7 @@ const Navbar = () => {
   const getNavItems = () => {
     const baseItems = [
       { name: 'Home', path: '/' },
-      { name: 'How It Works', path: '/#how-it-works' },
+      { name: 'How It Works', path: '/how-it-works' },
     ];
 
     if (isAuthenticated) {
@@ -59,9 +59,9 @@ const Navbar = () => {
         <div className="flex items-center justify-between py-4">
           <Link to="/" className="flex items-center space-x-2">
 
-            <span className="text-xl font-semibold tracking-tight flex items-center text-white">
-              Roadside Relief
-              <Shield className="ml-2 h-4 w-4 text-accent" />
+            <span className="text-xl font-semibold tracking-tight flex items-center text-blue-300">
+              Roadside Assistance
+              <Shield className="ml-2 h-4 w-4 text-green-400" />
             </span>
           </Link>
 
@@ -71,8 +71,8 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`nav-link text-white ${
-                  location.pathname === item.path ? 'text-accent after:scale-x-100' : ''
+                className={`nav-link text-blue-300 ${
+                  location.pathname === item.path ? 'text-green-400 after:scale-x-100' : ''
                 }`}
               >
                 {item.name}
@@ -90,7 +90,7 @@ const Navbar = () => {
                 )}
                 <Button
                   variant="ghost"
-                  className="text-white hover:text-accent"
+                  className="text-blue-300 hover:text-green-400"
                   onClick={logout}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
@@ -99,7 +99,7 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Button asChild variant="ghost" className="text-white hover:text-accent">
+                <Button asChild variant="ghost" className="text-blue-300 hover:text-green-400">
                   <Link to="/login">Sign In</Link>
                 </Button>
                 <Button asChild className="bg-accent hover:bg-accent/90">
@@ -130,7 +130,7 @@ const Navbar = () => {
             <Link
               key={item.name}
               to={item.path}
-              className="text-lg font-medium text-white hover:text-accent transition-colors"
+              className="text-lg font-medium text-blue-300 hover:text-green-400 transition-colors"
             >
               {item.name}
             </Link>
@@ -147,7 +147,7 @@ const Navbar = () => {
                   </Link>
                 </Button>
               )}
-              <Button variant="outline" className="w-full text-white border-white/30 hover:bg-blue-800/50" onClick={logout}>
+              <Button variant="outline" className="w-full text-blue-300 border-blue-300/30 hover:bg-blue-800/50" onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Log Out
               </Button>
@@ -160,7 +160,7 @@ const Navbar = () => {
                   Need Help?
                 </Link>
               </Button>
-              <Button variant="outline" className="w-full text-white border-white/30 hover:bg-blue-800/50" asChild>
+              <Button variant="outline" className="w-full text-blue-300 border-blue-300/30 hover:bg-blue-800/50" asChild>
                 <Link to="/login">Sign In</Link>
               </Button>
             </>

@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import HelperDashboard from "./pages/HelperDashboard";
+import HowItWorks from "./pages/HowItWorks";
 import { useEffect } from "react";
 import ProtectedCustomerRoute from './components/auth/ProtectedCustomerRoute';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -51,6 +52,7 @@ const AppRoutes = () => (
     <Route path="/helper" element={<Helper />} />
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
+    <Route path="/how-it-works" element={<HowItWorks />} />
 
     {/* 404 Route */}
     <Route path="*" element={<NotFound />} />

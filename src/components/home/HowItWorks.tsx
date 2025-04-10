@@ -42,16 +42,16 @@ const HowItWorks = () => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="mb-4 animate-slide-up opacity-0" style={{ animationDelay: '0.05s', animationFillMode: 'forwards' }}>How It Works</h2>
-          <p className="text-xl text-muted-foreground animate-slide-up opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
+          <h2 className="mb-4 animate-slide-up opacity-0 text-blue-600" style={{ animationDelay: '0.05s', animationFillMode: 'forwards' }}>How It Works</h2>
+          <p className="text-xl text-blue-500 animate-slide-up opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
             Get back on the road in four simple steps
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="relative flex flex-col items-center text-center animate-slide-up opacity-0"
               style={{ animationDelay: `${step.delay}s`, animationFillMode: 'forwards' }}
             >
@@ -59,24 +59,27 @@ const HowItWorks = () => {
                 <div className="feature-icon-bg" />
                 {step.icon}
               </div>
-              
+
               {index < steps.length - 1 && (
                 <div className="absolute top-7 left-[calc(50%+2rem)] w-full h-0.5 bg-gradient-to-r from-primary/30 to-transparent hidden lg:block" />
               )}
-              
-              <span className="absolute top-3 -right-3 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">
+
+              <span className="absolute top-3 -right-3 w-6 h-6 rounded-full bg-primary text-blue-300 flex items-center justify-center text-sm font-medium">
                 {index + 1}
               </span>
-              
-              <h3 className="text-xl font-medium mb-2">{step.title}</h3>
-              <p className="text-muted-foreground">{step.description}</p>
+
+              <h3 className="text-xl font-medium mb-2 text-blue-600">{step.title}</h3>
+              <p className="text-blue-500">{step.description}</p>
             </div>
           ))}
         </div>
 
-        <div className="flex justify-center mt-16">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-16">
           <Button asChild size="lg" className="animate-slide-up opacity-0 btn-hover" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
             <Link to="/request">Need Help Now</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="animate-slide-up opacity-0 btn-hover border-blue-300 text-blue-300" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
+            <Link to="/how-it-works">Learn More</Link>
           </Button>
         </div>
       </div>
