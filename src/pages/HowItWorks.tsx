@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import HowItWorksComponent from '@/components/home/HowItWorks';
-import Features from '@/components/home/Features';
-import Testimonials from '@/components/home/Testimonials';
 import { Button } from '@/components/ui/button';
 import { Car, Shield, Clock, Star, User } from 'lucide-react';
 
@@ -55,12 +53,7 @@ const HowItWorksPage = () => {
           <HowItWorksComponent />
         </div>
 
-        {/* Features Section */}
-        <div className="backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 my-8 mx-4 shadow-xl">
-          <Features />
-        </div>
-
-        {/* Compact Features Section */}
+        {/* Why Choose Us Section */}
         <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-20 min-h-screen">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 shadow-xl">
@@ -103,11 +96,6 @@ const HowItWorksPage = () => {
         </section>
 
         {/* Testimonials Section */}
-        <div className="backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 my-8 mx-4 shadow-xl">
-          <Testimonials />
-        </div>
-
-        {/* Additional Testimonials Section */}
         <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-20 min-h-screen">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 backdrop-blur-sm bg-blue-900/40 p-8 rounded-lg border border-blue-300/30 shadow-xl">
