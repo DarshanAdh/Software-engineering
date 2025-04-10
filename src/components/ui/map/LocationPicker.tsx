@@ -44,26 +44,37 @@ const LocationPicker = ({
   const handleLocationChange = (lat: number, lng: number) => {
     setLatitude(lat);
     setLongitude(lng);
-    
+
     // Reverse geocode to get address
     fetchAddressFromCoordinates(lat, lng);
   };
 
+  // Add debounce to prevent too many requests
   const fetchAddressFromCoordinates = async (lat: number, lng: number) => {
     try {
+      // Add a small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
         {
           headers: {
             'Accept-Language': 'en-US,en;q=0.9',
-            'User-Agent': 'RoadsideRelief/1.0'
+            'User-Agent': 'RoadsideAssistance/1.0'
           }
         }
       );
-      
+
       const data = await response.json();
       if (data && data.display_name) {
         setAddress(data.display_name);
+
+        // Call onLocationSelect with the updated location
+        onLocationSelect({
+          latitude: lat,
+          longitude: lng,
+          address: data.display_name
+        });
       }
     } catch (error) {
       console.error('Error fetching address:', error);
@@ -72,25 +83,38 @@ const LocationPicker = ({
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     setIsSearching(true);
     try {
+      // Add a small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`,
         {
           headers: {
             'Accept-Language': 'en-US,en;q=0.9',
-            'User-Agent': 'RoadsideRelief/1.0'
+            'User-Agent': 'RoadsideAssistance/1.0'
           }
         }
       );
-      
+
       const data = await response.json();
       if (data && data.length > 0) {
         const result = data[0];
-        setLatitude(parseFloat(result.lat));
-        setLongitude(parseFloat(result.lon));
+        const lat = parseFloat(result.lat);
+        const lng = parseFloat(result.lon);
+
+        setLatitude(lat);
+        setLongitude(lng);
         setAddress(result.display_name);
+
+        // Call onLocationSelect with the updated location
+        onLocationSelect({
+          latitude: lat,
+          longitude: lng,
+          address: result.display_name
+        });
       }
     } catch (error) {
       console.error('Error searching location:', error);
@@ -119,8 +143,8 @@ const LocationPicker = ({
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <Button 
-            type="button" 
+          <Button
+            type="button"
             onClick={handleSearch}
             disabled={isSearching}
             variant="outline"
@@ -152,9 +176,9 @@ const LocationPicker = ({
         </div>
       </div>
 
-      <Button 
-        type="button" 
-        onClick={handleConfirm} 
+      <Button
+        type="button"
+        onClick={handleConfirm}
         className="w-full bg-accent hover:bg-accent/90"
       >
         Confirm Location
