@@ -9,6 +9,12 @@ interface User {
   email: string;
   userType: 'customer' | 'helper' | 'admin';
   isApproved?: boolean;
+  role?: 'admin' | 'superadmin';
+  permissions?: {
+    approveHelpers: boolean;
+    manageUsers: boolean;
+    viewTransactions: boolean;
+  };
 }
 
 interface AuthContextType {
@@ -58,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
         const userName = localStorage.getItem('userName');
-        const userType = localStorage.getItem('userType') as 'customer' | 'helper';
+        const userType = localStorage.getItem('userType') as 'customer' | 'helper' | 'admin';
 
         if (token && userId && userName && userType) {
           // Validate token with backend
@@ -71,21 +77,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (response.ok) {
             try {
               const data = await response.json();
-              setUser({
+              // Create user object with base properties
+              const userObj: User = {
                 id: userId,
                 fullName: userName,
-                email: data.email || '', // Try to get email from response or use empty string
-                userType
-              });
+                email: data.user?.email || '', // Try to get email from response or use empty string
+                userType: data.user?.userType || userType
+              };
+
+              // Add helper-specific properties
+              if (userObj.userType === 'helper' && data.user?.isApproved !== undefined) {
+                userObj.isApproved = data.user.isApproved;
+              }
+
+              // Add admin-specific properties
+              if (userObj.userType === 'admin' && data.user) {
+                if (data.user.role) {
+                  userObj.role = data.user.role;
+                }
+                if (data.user.permissions) {
+                  userObj.permissions = data.user.permissions;
+                }
+              }
+
+              setUser(userObj);
               setIsAuthenticated(true);
             } catch (e) {
               // If we can't parse the JSON, still authenticate the user with stored data
-              setUser({
+              const fallbackUser: User = {
                 id: userId,
                 fullName: userName,
                 email: '', // Not stored in localStorage for security
-                userType
-              });
+                userType: userType as 'customer' | 'helper' | 'admin'
+              };
+
+              setUser(fallbackUser);
               setIsAuthenticated(true);
             }
           } else {
@@ -109,32 +135,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string, userType: 'customer' | 'helper' | 'admin') => {
     setLoading(true);
     try {
-      // Special case for admin login (for testing purposes)
-      if (userType === 'admin' && email === 'admin@roadside.com' && password === 'Admin123!') {
-        // Create mock admin user
-        const adminUser = {
-          id: 'admin-1',
-          fullName: 'System Administrator',
-          email: 'admin@roadside.com',
-          userType: 'admin'
-        };
-
-        // Store admin info in localStorage
-        localStorage.setItem('token', 'admin-token-for-testing');
-        localStorage.setItem('userId', adminUser.id);
-        localStorage.setItem('userName', adminUser.fullName);
-        localStorage.setItem('userType', adminUser.userType);
-
-        // Update state
-        setUser(adminUser);
-        setIsAuthenticated(true);
-
-        toast.success('Admin login successful!');
-        navigate('/admin-dashboard');
-        return;
-      }
-
-      // Regular login for non-admin users
+      // Use the API for all logins (customer, helper, and admin)
       const response = await fetch(API_ENDPOINTS.auth.login, {
         method: 'POST',
         headers: {
@@ -156,12 +157,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('userName', data.user.fullName);
         localStorage.setItem('userType', data.user.userType);
 
-        setUser({
+        // Create user object with base properties
+        const userObj: User = {
           id: data.user.id,
           fullName: data.user.fullName,
           email: data.user.email,
           userType: data.user.userType
-        });
+        };
+
+        // Add helper-specific properties
+        if (data.user.userType === 'helper' && data.user.isApproved !== undefined) {
+          userObj.isApproved = data.user.isApproved;
+        }
+
+        // Add admin-specific properties
+        if (data.user.userType === 'admin') {
+          if (data.user.role) {
+            userObj.role = data.user.role;
+          }
+          if (data.user.permissions) {
+            userObj.permissions = data.user.permissions;
+          }
+        }
+
+        setUser(userObj);
         setIsAuthenticated(true);
 
         toast.success('Login successful!');
