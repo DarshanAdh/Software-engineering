@@ -61,7 +61,7 @@ const Login = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white text-shadow-lg mb-2">Welcome Back</h1>
           <p className="text-white text-shadow-md">
-            Log in to your Roadside Relief account
+            Log in to your Roadside Assistance account
           </p>
         </div>
 
