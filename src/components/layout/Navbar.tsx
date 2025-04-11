@@ -71,7 +71,11 @@ const Navbar = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-4">
           <Link to="/" className="flex items-center space-x-2">
-
+            <img
+              src="/logo.png"
+              alt="Roadside Caretakers Logo"
+              className="h-10 w-auto rounded-full object-cover border-2 border-green-400 shadow-md"
+            />
             <span className="text-xl font-semibold tracking-tight flex items-center text-blue-300">
               Roadside Assistance
               <Shield className="ml-2 h-4 w-4 text-green-400" />
@@ -127,6 +131,14 @@ const Navbar = () => {
         }`}
       >
         <nav className="flex flex-col p-6 space-y-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <img
+              src="/logo.png"
+              alt="Roadside Caretakers Logo"
+              className="h-10 w-auto rounded-full object-cover border-2 border-green-400 shadow-md"
+            />
+            <span className="text-xl font-semibold text-blue-300">Roadside Assistance</span>
+          </div>
           {navItems.map((item) => (
             <Link
               key={item.name}
