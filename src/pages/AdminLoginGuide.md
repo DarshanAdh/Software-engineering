@@ -1,0 +1,52 @@
+# Admin Login Guide for Roadside Assistance App
+
+## Admin Credentials
+
+To access the admin dashboard, use the following credentials:
+
+- **Email**: admin@roadside.com
+- **Password**: Admin123!
+- **User Type**: Admin (select from the tabs)
+
+## Login Steps
+
+1. Navigate to the login page at `/login`
+2. Click on the "Admin" tab in the login form
+3. Enter the admin email: `admin@roadside.com`
+4. Enter the admin password: `Admin123!`
+5. Click the "Log In" button
+6. You will be redirected to the admin dashboard
+
+## Admin Dashboard Features
+
+Once logged in as an admin, you can:
+
+1. **Approve Helper Applications**:
+   - View pending helper applications
+   - Approve or reject helpers
+   - View helper history
+
+2. **Manage Users**:
+   - View all users in the system
+   - Delete suspicious users
+   - View user history
+
+3. **Monitor Transactions**:
+   - View all financial transactions
+   - Track payment status
+   - Identify suspicious activities
+
+## Security Notes
+
+- The admin account has full access to the system
+- Always log out when you're done to protect sensitive information
+- For production, use a strong, unique password and enable two-factor authentication
+- Admin actions are logged for security purposes
+
+## Troubleshooting
+
+If you encounter issues logging in:
+- Make sure you've selected the "Admin" tab
+- Check that you've entered the credentials correctly
+- Clear your browser cache and try again
+- Ensure you have an internet connection

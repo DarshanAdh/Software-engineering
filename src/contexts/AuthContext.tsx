@@ -109,6 +109,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string, userType: 'customer' | 'helper' | 'admin') => {
     setLoading(true);
     try {
+      // Special case for admin login (for testing purposes)
+      if (userType === 'admin' && email === 'admin@roadside.com' && password === 'Admin123!') {
+        // Create mock admin user
+        const adminUser = {
+          id: 'admin-1',
+          fullName: 'System Administrator',
+          email: 'admin@roadside.com',
+          userType: 'admin'
+        };
+
+        // Store admin info in localStorage
+        localStorage.setItem('token', 'admin-token-for-testing');
+        localStorage.setItem('userId', adminUser.id);
+        localStorage.setItem('userName', adminUser.fullName);
+        localStorage.setItem('userType', adminUser.userType);
+
+        // Update state
+        setUser(adminUser);
+        setIsAuthenticated(true);
+
+        toast.success('Admin login successful!');
+        navigate('/admin-dashboard');
+        return;
+      }
+
+      // Regular login for non-admin users
       const response = await fetch(API_ENDPOINTS.auth.login, {
         method: 'POST',
         headers: {
