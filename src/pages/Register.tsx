@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -124,7 +123,17 @@ const Register = () => {
   // Handle customer registration
   const onSubmitCustomer = async (data: CustomerFormValues) => {
     try {
-      await register(data);
+      // Ensure all required fields are present and not optional
+      const customerData = {
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        userType: 'customer' as const,
+        driverLicense: data.driverLicense,
+        licensePlate: data.licensePlate
+      };
+      await register(customerData);
     } catch (error) {
       console.error('Registration error:', error);
     }
@@ -133,7 +142,18 @@ const Register = () => {
   // Handle helper registration
   const onSubmitHelper = async (data: HelperFormValues) => {
     try {
-      await register(data);
+      // Ensure all required fields are present and not optional
+      const helperData = {
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        userType: 'helper' as const,
+        services: data.services,
+        experience: data.experience,
+        vehicleInfo: data.vehicleInfo
+      };
+      await register(helperData);
     } catch (error) {
       console.error('Registration error:', error);
     }
@@ -153,7 +173,7 @@ const Register = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white text-shadow-lg mb-2">Create an Account</h1>
           <p className="text-white text-shadow-md">
-            Join Roadside Relief and get help when you need it most
+            Join Roadside Assistance and get help when you need it most
           </p>
         </div>
 
@@ -165,7 +185,7 @@ const Register = () => {
               <TabsTrigger value="helper" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-medium">I Can Help</TabsTrigger>
             </TabsList>
 
-            <CardContent className="mt-4">
+            <div className="mt-4">
               <TabsContent value="customer">
                 <Form {...customerForm}>
                   <form onSubmit={customerForm.handleSubmit(onSubmitCustomer)} className="space-y-4">
@@ -421,7 +441,7 @@ const Register = () => {
                   </form>
                 </Form>
               </TabsContent>
-            </CardContent>
+            </div>
           </Tabs>
 
           <div className="mt-6 text-center">
