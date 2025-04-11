@@ -7,6 +7,14 @@ export const API_ENDPOINTS = {
     register: `${API_BASE_URL}/auth/register`,
     validate: `${API_BASE_URL}/auth/validate`,
   },
+  admin: {
+    getAllUsers: `${API_BASE_URL}/admin/users`,
+    getPendingHelpers: `${API_BASE_URL}/admin/helpers/pending`,
+    approveHelper: `${API_BASE_URL}/admin/helpers/approve`,
+    deleteUser: `${API_BASE_URL}/admin/users`,
+    getTransactions: `${API_BASE_URL}/admin/transactions`,
+    getUserHistory: (userId: string) => `${API_BASE_URL}/admin/users/${userId}/history`,
+  },
   customer: {
     profile: `${API_BASE_URL}/users/profile`,
     requests: `${API_BASE_URL}/users/requests`,

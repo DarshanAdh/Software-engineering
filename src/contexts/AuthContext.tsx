@@ -7,14 +7,17 @@ interface User {
   id: string;
   fullName: string;
   email: string;
-  userType: 'customer' | 'helper';
+  userType: 'customer' | 'helper' | 'admin';
+  isApproved?: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string, userType: 'customer' | 'helper') => Promise<void>;
+  login: (email: string, password: string, userType: 'customer' | 'helper' | 'admin') => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
+  approveHelper: (helperId: string) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -24,10 +27,11 @@ interface RegisterData {
   email: string;
   phone: string;
   password: string;
-  userType: 'customer' | 'helper';
+  userType: 'customer' | 'helper' | 'admin';
   driverLicense?: string;
   licensePlate?: string;
   services?: string[];
+  isApproved?: boolean;
   experience?: string;
   vehicleInfo?: string;
 }
@@ -102,7 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initializeAuth();
   }, []);
 
-  const login = async (email: string, password: string, userType: 'customer' | 'helper') => {
+  const login = async (email: string, password: string, userType: 'customer' | 'helper' | 'admin') => {
     setLoading(true);
     try {
       const response = await fetch(API_ENDPOINTS.auth.login, {
@@ -135,7 +139,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAuthenticated(true);
 
         toast.success('Login successful!');
-        navigate(data.user.userType === 'helper' ? '/helper-dashboard' : '/dashboard');
+        // Redirect based on user type
+        if (data.user.userType === 'admin') {
+          navigate('/admin-dashboard');
+        } else if (data.user.userType === 'helper') {
+          // Check if helper is approved
+          if (data.user.isApproved) {
+            navigate('/helper-dashboard');
+          } else {
+            toast.warning('Your account is pending approval by an administrator.');
+            navigate('/pending-approval');
+          }
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         // Handle non-OK responses
         if (response.status === 429) {
@@ -200,6 +217,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const approveHelper = async (helperId: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_ENDPOINTS.admin.approveHelper}/${helperId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.ok) {
+        toast.success('Helper approved successfully');
+        return true;
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Failed to approve helper');
+        return false;
+      }
+    } catch (error) {
+      console.error('Approve helper error:', error);
+      toast.error('An error occurred while approving the helper');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_ENDPOINTS.admin.deleteUser}/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.ok) {
+        toast.success('User deleted successfully');
+        return true;
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Failed to delete user');
+        return false;
+      }
+    } catch (error) {
+      console.error('Delete user error:', error);
+      toast.error('An error occurred while deleting the user');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = () => {
     localStorage.clear();
     setUser(null);
@@ -213,6 +285,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     login,
     register,
+    approveHelper,
+    deleteUser,
     logout,
     isAuthenticated,
   };

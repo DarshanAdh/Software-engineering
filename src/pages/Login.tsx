@@ -24,8 +24,8 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const Login = () => {
   const { login, loading: isLoading } = useAuth();
   const location = useLocation();
-  const [userType, setUserType] = useState<'customer' | 'helper'>(
-    (location.state?.userType as 'customer' | 'helper') || 'customer'
+  const [userType, setUserType] = useState<'customer' | 'helper' | 'admin'>(
+    (location.state?.userType as 'customer' | 'helper' | 'admin') || 'customer'
   );
 
   // Form setup
@@ -66,10 +66,11 @@ const Login = () => {
         </div>
 
         <div className="backdrop-blur-md bg-white/20 p-8 rounded-lg border border-white/30 shadow-2xl">
-          <Tabs value={userType} onValueChange={(v) => setUserType(v as 'customer' | 'helper')}>
-            <TabsList className="grid grid-cols-2 w-full bg-white/30 rounded-md mb-6">
+          <Tabs value={userType} onValueChange={(v) => setUserType(v as 'customer' | 'helper' | 'admin')}>
+            <TabsList className="grid grid-cols-3 w-full bg-white/30 rounded-md mb-6">
               <TabsTrigger value="customer" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-medium">Customer</TabsTrigger>
               <TabsTrigger value="helper" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-medium">Helper</TabsTrigger>
+              <TabsTrigger value="admin" className="data-[state=active]:bg-red-600 data-[state=active]:text-white font-medium">Admin</TabsTrigger>
             </TabsList>
 
             <Form {...form}>

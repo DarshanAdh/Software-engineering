@@ -17,6 +17,10 @@ import HowItWorks from "./pages/HowItWorks";
 import { useEffect } from "react";
 import ProtectedCustomerRoute from './components/auth/ProtectedCustomerRoute';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import ProtectedAdminRoute from './components/auth/ProtectedAdminRoute';
+import ProtectedHelperRoute from './components/auth/ProtectedHelperRoute';
+import AdminDashboard from './pages/AdminDashboard';
+import PendingApproval from './pages/PendingApproval';
 
 // Configure the query client with better defaults for reliability
 const queryClient = new QueryClient({
@@ -44,8 +48,18 @@ const AppRoutes = () => (
     </Route>
 
     {/* Protected Helper Routes */}
-    <Route element={<ProtectedRoute />}>
+    <Route element={<ProtectedHelperRoute />}>
       <Route path="/helper-dashboard" element={<HelperDashboard />} />
+    </Route>
+
+    {/* Admin Routes */}
+    <Route element={<ProtectedAdminRoute />}>
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
+    </Route>
+
+    {/* Pending Approval Route */}
+    <Route element={<ProtectedRoute />}>
+      <Route path="/pending-approval" element={<PendingApproval />} />
     </Route>
 
     {/* Public Routes */}
