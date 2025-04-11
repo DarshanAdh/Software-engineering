@@ -250,3 +250,26 @@ input, textarea, select, button {
     background-position: 200% 0;
   }
 }
+
+/* Shield shape for logo */
+.shield-container {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shield-clip {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 50% 100%, 0% 75%);
+  transition: transform 0.3s ease;
+  border: 2px solid #93c5fd; /* Light blue border */
+  background-color: rgba(59, 130, 246, 0.1); /* Light blue background */
+}
+
+.shield-clip:hover {
+  transform: scale(1.1);
+}
+
+
