@@ -17,9 +17,11 @@ To create an admin user in the database, follow these steps:
 3. The script will create an admin user with the following credentials:
    - **Email**: admin123@gmail.com
    - **Password**: admin123
-   - **User Type**: admin
+   - **Role**: superadmin
 
    If an admin with this email already exists, the script will notify you.
+
+> **Note**: Admin users are now stored in a separate `admins` collection in the database, not in the `users` collection.
 
 ## Logging in as Admin
 

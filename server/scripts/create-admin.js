@@ -1,6 +1,6 @@
 /**
  * Script to create an admin user in the database
- * 
+ *
  * Run with: node create-admin.js
  */
 
@@ -16,8 +16,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/roadside-
     process.exit(1);
   });
 
-// Import User model
-const User = require('../models/User');
+// Import Admin model
+const Admin = require('../models/Admin');
 
 // Admin user data
 const adminData = {
@@ -25,39 +25,34 @@ const adminData = {
   email: 'admin123@gmail.com',
   phone: '1234567890',
   password: 'admin123',
-  userType: 'admin',
-  // These fields are required by the schema but not used for admin
-  driverLicense: 'ADMIN00000',
-  licensePlate: 'ADMIN'
+  role: 'superadmin',
+  permissions: {
+    approveHelpers: true,
+    manageUsers: true,
+    viewTransactions: true
+  }
 };
 
 async function createAdmin() {
   try {
     // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: adminData.email });
-    
+    const existingAdmin = await Admin.findOne({ email: adminData.email });
+
     if (existingAdmin) {
       console.log('Admin user already exists with this email.');
       process.exit(0);
     }
-    
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(adminData.password, salt);
-    
-    // Create the admin user
-    const admin = new User({
-      ...adminData,
-      password: hashedPassword
-    });
-    
+
+    // Create the admin user (password will be hashed by the pre-save middleware)
+    const admin = new Admin(adminData);
+
     await admin.save();
-    
+
     console.log('Admin user created successfully!');
     console.log('Email:', adminData.email);
     console.log('Password:', adminData.password);
-    console.log('User Type: Admin');
-    
+    console.log('Role: ' + adminData.role);
+
   } catch (error) {
     console.error('Error creating admin user:', error);
   } finally {
