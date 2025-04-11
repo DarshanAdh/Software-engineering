@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,13 +7,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'sonner';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Separator } from '@/components/ui/separator';
 import { MultiSelect } from '@/components/ui/multi-select';
 
 // Customer registration schema
@@ -80,8 +78,7 @@ type CustomerFormValues = z.infer<typeof customerSchema>;
 type HelperFormValues = z.infer<typeof helperSchema>;
 
 const Register = () => {
-  const { register, isLoading } = useAuth();
-  const navigate = useNavigate();
+  const { register, loading: isLoading } = useAuth();
   const [userType, setUserType] = useState<'customer' | 'helper'>('customer');
 
   // Customer form setup
@@ -143,22 +140,29 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-900/80 to-green-900/50">
+    <div className="min-h-screen flex flex-col high-quality-image" style={{
+      backgroundImage: 'url(/phone.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed'
+    }}>
       <Navbar />
 
-      <div className="flex-1 container max-w-6xl mx-auto px-4 pt-24 pb-16">
-        <Card className="w-full max-w-lg mx-auto shadow-xl bg-white/95 backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-blue-900">Create an Account</CardTitle>
-            <CardDescription className="text-blue-700">
-              Join Roadside Relief and get help when you need it most.
-            </CardDescription>
-          </CardHeader>
+      <div className="flex-1 container max-w-2xl mx-auto px-4 pt-24 pb-16">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white text-shadow-lg mb-2">Create an Account</h1>
+          <p className="text-white text-shadow-md">
+            Join Roadside Relief and get help when you need it most
+          </p>
+        </div>
+
+        <div className="backdrop-blur-md bg-white/20 p-8 rounded-lg border border-white/30 shadow-2xl">
 
           <Tabs value={userType} onValueChange={(v) => setUserType(v as 'customer' | 'helper')}>
-            <TabsList className="grid grid-cols-2 w-full bg-blue-100">
-              <TabsTrigger value="customer" className="data-[state=active]:bg-accent data-[state=active]:text-white">I Need Help</TabsTrigger>
-              <TabsTrigger value="helper" className="data-[state=active]:bg-accent data-[state=active]:text-white">I Can Help</TabsTrigger>
+            <TabsList className="grid grid-cols-2 w-full bg-white/30 rounded-md mb-6">
+              <TabsTrigger value="customer" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-medium">I Need Help</TabsTrigger>
+              <TabsTrigger value="helper" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white font-medium">I Can Help</TabsTrigger>
             </TabsList>
 
             <CardContent className="mt-4">
@@ -170,11 +174,11 @@ const Register = () => {
                       name="fullName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-blue-800">Full Name</FormLabel>
+                          <FormLabel className="text-white text-shadow-sm">Full Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your full name" className="border-blue-200 focus:border-accent" {...field} />
+                            <Input placeholder="Enter your full name" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                           </FormControl>
-                          <FormMessage className="text-red-500" />
+                          <FormMessage className="text-red-300 font-medium" />
                         </FormItem>
                       )}
                     />
@@ -185,11 +189,11 @@ const Register = () => {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="text-white text-shadow-sm">Email</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="Enter your email" {...field} />
+                              <Input type="email" placeholder="Enter your email" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-300 font-medium" />
                           </FormItem>
                         )}
                       />
@@ -199,11 +203,11 @@ const Register = () => {
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <FormLabel className="text-white text-shadow-sm">Phone Number</FormLabel>
                             <FormControl>
-                              <Input type="tel" placeholder="Enter your phone number" {...field} />
+                              <Input type="tel" placeholder="Enter your phone number" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-300 font-medium" />
                           </FormItem>
                         )}
                       />
@@ -214,11 +218,11 @@ const Register = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel className="text-white text-shadow-sm">Password</FormLabel>
                           <FormControl>
-                            <Input type="password" placeholder="Create a password" {...field} />
+                            <Input type="password" placeholder="Create a password" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-300 font-medium" />
                         </FormItem>
                       )}
                     />
@@ -229,11 +233,11 @@ const Register = () => {
                         name="driverLicense"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Driver License</FormLabel>
+                            <FormLabel className="text-white text-shadow-sm">Driver License</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter driver license" {...field} />
+                              <Input placeholder="Enter driver license" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-300 font-medium" />
                           </FormItem>
                         )}
                       />
@@ -243,11 +247,11 @@ const Register = () => {
                         name="licensePlate"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>License Plate</FormLabel>
+                            <FormLabel className="text-white text-shadow-sm">License Plate</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter license plate" {...field} />
+                              <Input placeholder="Enter license plate" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-300 font-medium" />
                           </FormItem>
                         )}
                       />
@@ -265,16 +269,16 @@ const Register = () => {
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>
-                              I accept the <Link to="#" className="text-accent hover:underline">terms and conditions</Link>
+                            <FormLabel className="text-white text-shadow-sm">
+                              I accept the <Link to="#" className="text-white hover:text-blue-200 hover:underline">terms and conditions</Link>
                             </FormLabel>
-                            <FormMessage />
+                            <FormMessage className="text-red-300 font-medium" />
                           </div>
                         </FormItem>
                       )}
                     />
 
-                    <Button type="submit" className="w-full mt-2 bg-accent hover:bg-accent/90" disabled={isLoading}>
+                    <Button type="submit" className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md" disabled={isLoading}>
                       {isLoading ? 'Registering...' : 'Create Customer Account'}
                     </Button>
                   </form>
@@ -289,11 +293,11 @@ const Register = () => {
                       name="fullName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel className="text-white text-shadow-sm">Full Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your full name" {...field} />
+                            <Input placeholder="Enter your full name" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-300 font-medium" />
                         </FormItem>
                       )}
                     />
@@ -304,11 +308,11 @@ const Register = () => {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="text-white text-shadow-sm">Email</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="Enter your email" {...field} />
+                              <Input type="email" placeholder="Enter your email" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-300 font-medium" />
                           </FormItem>
                         )}
                       />
@@ -318,11 +322,11 @@ const Register = () => {
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <FormLabel className="text-white text-shadow-sm">Phone Number</FormLabel>
                             <FormControl>
-                              <Input type="tel" placeholder="Enter your phone number" {...field} />
+                              <Input type="tel" placeholder="Enter your phone number" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-300 font-medium" />
                           </FormItem>
                         )}
                       />
@@ -333,11 +337,11 @@ const Register = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel className="text-white text-shadow-sm">Password</FormLabel>
                           <FormControl>
-                            <Input type="password" placeholder="Create a password" {...field} />
+                            <Input type="password" placeholder="Create a password" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-300 font-medium" />
                         </FormItem>
                       )}
                     />
@@ -347,16 +351,17 @@ const Register = () => {
                       name="services"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Services You Provide</FormLabel>
+                          <FormLabel className="text-white text-shadow-sm">Services You Provide</FormLabel>
                           <FormControl>
                             <MultiSelect
                               options={serviceOptions}
                               selected={field.value}
                               onChange={field.onChange}
                               placeholder="Select services"
+                              className="bg-white/70 border-white/30"
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-300 font-medium" />
                         </FormItem>
                       )}
                     />
@@ -366,11 +371,11 @@ const Register = () => {
                       name="experience"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Experience</FormLabel>
+                          <FormLabel className="text-white text-shadow-sm">Experience</FormLabel>
                           <FormControl>
-                            <Input placeholder="Describe your experience" {...field} />
+                            <Input placeholder="Describe your experience" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-300 font-medium" />
                         </FormItem>
                       )}
                     />
@@ -380,11 +385,11 @@ const Register = () => {
                       name="vehicleInfo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Vehicle Information</FormLabel>
+                          <FormLabel className="text-white text-shadow-sm">Vehicle Information</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter vehicle make, model, year" {...field} />
+                            <Input placeholder="Enter vehicle make, model, year" className="bg-white/70 border-white/30 focus:border-blue-400" {...field} />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-300 font-medium" />
                         </FormItem>
                       )}
                     />
@@ -401,16 +406,16 @@ const Register = () => {
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>
-                              I accept the <Link to="#" className="text-accent hover:underline">terms and conditions</Link>
+                            <FormLabel className="text-white text-shadow-sm">
+                              I accept the <Link to="#" className="text-white hover:text-blue-200 hover:underline">terms and conditions</Link>
                             </FormLabel>
-                            <FormMessage />
+                            <FormMessage className="text-red-300 font-medium" />
                           </div>
                         </FormItem>
                       )}
                     />
 
-                    <Button type="submit" className="w-full mt-2 bg-accent hover:bg-accent/90" disabled={isLoading}>
+                    <Button type="submit" className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md" disabled={isLoading}>
                       {isLoading ? 'Registering...' : 'Create Helper Account'}
                     </Button>
                   </form>
@@ -419,17 +424,15 @@ const Register = () => {
             </CardContent>
           </Tabs>
 
-          <CardFooter className="justify-center">
-            <div className="text-center">
-              <p className="text-sm text-blue-700">
-                Already have an account?{' '}
-                <Link to="/login" className="text-accent hover:underline font-medium">
-                  Log in
-                </Link>
-              </p>
-            </div>
-          </CardFooter>
-        </Card>
+          <div className="mt-6 text-center">
+            <p className="text-white text-shadow-sm">
+              Already have an account?{' '}
+              <Link to="/login" className="text-white hover:text-blue-200 hover:underline font-medium">
+                Log in
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="mt-auto">
