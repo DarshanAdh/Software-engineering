@@ -24,18 +24,31 @@ const Navbar = () => {
   }, [location.pathname]);
 
   const getNavItems = () => {
+    // Base items for regular users
     const baseItems = [
       { name: 'Home', path: '/' },
       { name: 'How It Works', path: '/how-it-works' },
     ];
 
     if (isAuthenticated) {
-      if (user?.userType === 'helper') {
+      // Admin-specific navigation
+      if (user?.userType === 'admin') {
+        return [
+          { name: 'Admin Dashboard', path: '/admin-dashboard' },
+          { name: 'Pending Helpers', path: '/admin-dashboard?tab=pending-helpers' },
+          { name: 'All Users', path: '/admin-dashboard?tab=all-users' },
+          { name: 'Transactions', path: '/admin-dashboard?tab=transactions' }
+        ];
+      }
+      // Helper-specific navigation
+      else if (user?.userType === 'helper') {
         return [
           ...baseItems,
           { name: 'Dashboard', path: '/helper-dashboard' }
         ];
-      } else {
+      }
+      // Customer-specific navigation
+      else {
         return [
           ...baseItems,
           { name: 'Dashboard', path: '/dashboard' },

@@ -16,7 +16,7 @@ const Hero = () => {
 
   return (
     <div className="relative overflow-hidden pt-16 pb-16 min-h-screen" style={{
-      backgroundImage: 'url(/img.jpg)',
+      backgroundImage: 'url(/road.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',

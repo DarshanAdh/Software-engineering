@@ -4,8 +4,8 @@
 
 To access the admin dashboard, use the following credentials:
 
-- **Email**: admin@roadside.com
-- **Password**: Admin123!
+- **Email**: admin123@gmail.com
+- **Password**: admin123
 - **User Type**: Admin (select from the tabs)
 
 ## Login Steps

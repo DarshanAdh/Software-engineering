@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '@/config/api';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -46,7 +47,13 @@ interface RequestHistory {
 
 const AdminDashboard = () => {
   const { user, approveHelper, deleteUser } = useAuth();
-  const [activeTab, setActiveTab] = useState('pending-helpers');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Get tab from URL query parameter or default to 'pending-helpers'
+  const queryParams = new URLSearchParams(location.search);
+  const tabFromUrl = queryParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabFromUrl || 'pending-helpers');
   const [pendingHelpers, setPendingHelpers] = useState<UserData[]>([]);
   const [allUsers, setAllUsers] = useState<UserData[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -178,6 +185,14 @@ const AdminDashboard = () => {
     }
   };
 
+  // Update active tab when URL changes
+  useEffect(() => {
+    const tab = queryParams.get('tab');
+    if (tab && ['pending-helpers', 'all-users', 'transactions'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [location.search]);
+
   // Load data based on active tab
   useEffect(() => {
     if (activeTab === 'pending-helpers') {
@@ -214,7 +229,14 @@ const AdminDashboard = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => {
+                setActiveTab(value);
+                // Update URL with tab parameter
+                navigate(`/admin-dashboard?tab=${value}`, { replace: true });
+              }}
+            >
               <TabsList className="grid grid-cols-3 mb-8">
                 <TabsTrigger value="pending-helpers" className="data-[state=active]:bg-blue-600">
                   <AlertTriangle className="mr-2 h-4 w-4" />
@@ -269,24 +291,24 @@ const AdminDashboard = () => {
                                 <TableCell className="text-gray-300">{formatDate(helper.createdAt)}</TableCell>
                                 <TableCell>
                                   <div className="flex space-x-2">
-                                    <Button 
-                                      size="sm" 
+                                    <Button
+                                      size="sm"
                                       className="bg-green-600 hover:bg-green-700"
                                       onClick={() => handleApproveHelper(helper.id)}
                                     >
                                       <CheckCircle className="mr-1 h-4 w-4" />
                                       Approve
                                     </Button>
-                                    <Button 
-                                      size="sm" 
+                                    <Button
+                                      size="sm"
                                       variant="destructive"
                                       onClick={() => handleDeleteUser(helper.id)}
                                     >
                                       <XCircle className="mr-1 h-4 w-4" />
                                       Reject
                                     </Button>
-                                    <Button 
-                                      size="sm" 
+                                    <Button
+                                      size="sm"
                                       variant="outline"
                                       onClick={() => fetchUserHistory(helper.id)}
                                     >
@@ -342,10 +364,10 @@ const AdminDashboard = () => {
                                 <TableCell className="text-gray-300">{user.email}</TableCell>
                                 <TableCell>
                                   <Badge className={
-                                    user.userType === 'admin' 
-                                      ? 'bg-purple-600' 
-                                      : user.userType === 'helper' 
-                                        ? 'bg-blue-600' 
+                                    user.userType === 'admin'
+                                      ? 'bg-purple-600'
+                                      : user.userType === 'helper'
+                                        ? 'bg-blue-600'
                                         : 'bg-green-600'
                                   }>
                                     {user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}
@@ -361,8 +383,8 @@ const AdminDashboard = () => {
                                 <TableCell>
                                   <div className="flex space-x-2">
                                     {user.userType === 'helper' && !user.isApproved && (
-                                      <Button 
-                                        size="sm" 
+                                      <Button
+                                        size="sm"
                                         className="bg-green-600 hover:bg-green-700"
                                         onClick={() => handleApproveHelper(user.id)}
                                       >
@@ -371,8 +393,8 @@ const AdminDashboard = () => {
                                       </Button>
                                     )}
                                     {user.userType !== 'admin' && (
-                                      <Button 
-                                        size="sm" 
+                                      <Button
+                                        size="sm"
                                         variant="destructive"
                                         onClick={() => handleDeleteUser(user.id)}
                                       >
@@ -380,8 +402,8 @@ const AdminDashboard = () => {
                                         Delete
                                       </Button>
                                     )}
-                                    <Button 
-                                      size="sm" 
+                                    <Button
+                                      size="sm"
                                       variant="outline"
                                       onClick={() => fetchUserHistory(user.id)}
                                     >
@@ -441,10 +463,10 @@ const AdminDashboard = () => {
                                 </TableCell>
                                 <TableCell>
                                   <Badge className={
-                                    transaction.status === 'completed' 
-                                      ? 'bg-green-600' 
-                                      : transaction.status === 'pending' 
-                                        ? 'bg-yellow-600' 
+                                    transaction.status === 'completed'
+                                      ? 'bg-green-600'
+                                      : transaction.status === 'pending'
+                                        ? 'bg-yellow-600'
                                         : 'bg-red-600'
                                   }>
                                     {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
@@ -473,8 +495,8 @@ const AdminDashboard = () => {
                       Viewing history for user {allUsers.find(u => u.id === selectedUserId)?.fullName || pendingHelpers.find(h => h.id === selectedUserId)?.fullName}
                     </CardDescription>
                   </div>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => {
                       setUserHistory([]);
@@ -514,11 +536,11 @@ const AdminDashboard = () => {
                               <TableCell className="text-gray-300">{request.serviceType}</TableCell>
                               <TableCell>
                                 <Badge className={
-                                  request.status === 'completed' 
-                                    ? 'bg-green-600' 
-                                    : request.status === 'in_progress' 
-                                      ? 'bg-blue-600' 
-                                      : request.status === 'cancelled' 
+                                  request.status === 'completed'
+                                    ? 'bg-green-600'
+                                    : request.status === 'in_progress'
+                                      ? 'bg-blue-600'
+                                      : request.status === 'cancelled'
                                         ? 'bg-red-600'
                                         : 'bg-yellow-600'
                                 }>

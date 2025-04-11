@@ -17,12 +17,12 @@ const HowItWorksPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col high-quality-image" style={{
-      backgroundImage: 'url(/img.jpg)',
+      backgroundImage: 'url(/tire.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'fixed',
-      imageRendering: 'high-quality'
+      imageRendering: 'crisp-edges',
     }}>
       <Navbar />
 

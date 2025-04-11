@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,8 +22,22 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
-  const { login, loading: isLoading } = useAuth();
+  const { login, loading: isLoading, isAuthenticated, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Redirect if already logged in
+  if (isAuthenticated) {
+    if (user?.userType === 'admin') {
+      return <Navigate to="/admin-dashboard" replace />;
+    } else if (user?.userType === 'helper') {
+      return user.isApproved ?
+        <Navigate to="/helper-dashboard" replace /> :
+        <Navigate to="/pending-approval" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
+  }
   const [userType, setUserType] = useState<'customer' | 'helper' | 'admin'>(
     (location.state?.userType as 'customer' | 'helper' | 'admin') || 'customer'
   );
