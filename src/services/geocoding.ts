@@ -1,8 +1,7 @@
 /**
- * Geocoding service for converting between addresses and coordinates
+ * Geocoding service using OpenStreetMap Nominatim
+ * This is a free alternative to Google Maps Geocoding API
  */
-
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 /**
  * Convert an address to coordinates (latitude and longitude)
@@ -12,9 +11,13 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 export const geocodeAddress = async (address: string): Promise<{ lat: number; lng: number }> => {
   try {
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-        address
-      )}&key=${GOOGLE_MAPS_API_KEY}`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
+      {
+        headers: {
+          'Accept-Language': 'en-US,en;q=0.9',
+          'User-Agent': 'RoadsideAssistance/1.0'
+        }
+      }
     );
 
     if (!response.ok) {
@@ -23,12 +26,15 @@ export const geocodeAddress = async (address: string): Promise<{ lat: number; ln
 
     const data = await response.json();
 
-    if (data.status !== 'OK') {
-      throw new Error(`Geocoding failed: ${data.status}`);
+    if (!data || data.length === 0) {
+      throw new Error('No results found for this address');
     }
 
-    const { lat, lng } = data.results[0].geometry.location;
-    return { lat, lng };
+    const result = data[0];
+    return {
+      lat: parseFloat(result.lat),
+      lng: parseFloat(result.lon)
+    };
   } catch (error) {
     console.error('Error geocoding address:', error);
     throw error;
@@ -44,7 +50,13 @@ export const geocodeAddress = async (address: string): Promise<{ lat: number; ln
 export const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
   try {
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+      {
+        headers: {
+          'Accept-Language': 'en-US,en;q=0.9',
+          'User-Agent': 'RoadsideAssistance/1.0'
+        }
+      }
     );
 
     if (!response.ok) {
@@ -53,11 +65,11 @@ export const reverseGeocode = async (lat: number, lng: number): Promise<string> 
 
     const data = await response.json();
 
-    if (data.status !== 'OK') {
-      throw new Error(`Reverse geocoding failed: ${data.status}`);
+    if (!data || !data.display_name) {
+      throw new Error('No address found for these coordinates');
     }
 
-    return data.results[0].formatted_address;
+    return data.display_name;
   } catch (error) {
     console.error('Error reverse geocoding:', error);
     throw error;
@@ -66,39 +78,37 @@ export const reverseGeocode = async (lat: number, lng: number): Promise<string> 
 
 /**
  * Calculate the distance between two points in kilometers
+ * Uses the Haversine formula
  * @param origin Origin coordinates
  * @param destination Destination coordinates
- * @returns Promise with the distance in kilometers or error
+ * @returns Distance in kilometers
  */
-export const calculateDistance = async (
+export const calculateDistance = (
   origin: { lat: number; lng: number },
   destination: { lat: number; lng: number }
-): Promise<number> => {
-  try {
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.lat},${
-        origin.lng
-      }&destinations=${destination.lat},${
-        destination.lng
-      }&mode=driving&key=${GOOGLE_MAPS_API_KEY}`
-    );
+): number => {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = deg2rad(destination.lat - origin.lat);
+  const dLng = deg2rad(destination.lng - origin.lng);
 
-    if (!response.ok) {
-      throw new Error(`Distance Matrix API error: ${response.status}`);
-    }
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(origin.lat)) * Math.cos(deg2rad(destination.lat)) *
+    Math.sin(dLng/2) * Math.sin(dLng/2);
 
-    const data = await response.json();
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const distance = R * c; // Distance in km
 
-    if (data.status !== 'OK') {
-      throw new Error(`Distance calculation failed: ${data.status}`);
-    }
+  return distance;
+};
 
-    // Return distance in kilometers
-    return data.rows[0].elements[0].distance.value / 1000;
-  } catch (error) {
-    console.error('Error calculating distance:', error);
-    throw error;
-  }
+/**
+ * Convert degrees to radians
+ * @param deg Degrees
+ * @returns Radians
+ */
+const deg2rad = (deg: number): number => {
+  return deg * (Math.PI/180);
 };
 
 /**
@@ -109,9 +119,13 @@ export const calculateDistance = async (
 export const getPlacePredictions = async (input: string): Promise<any[]> => {
   try {
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
-        input
-      )}&key=${GOOGLE_MAPS_API_KEY}`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}&limit=5`,
+      {
+        headers: {
+          'Accept-Language': 'en-US,en;q=0.9',
+          'User-Agent': 'RoadsideAssistance/1.0'
+        }
+      }
     );
 
     if (!response.ok) {
@@ -119,12 +133,7 @@ export const getPlacePredictions = async (input: string): Promise<any[]> => {
     }
 
     const data = await response.json();
-
-    if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-      throw new Error(`Place predictions failed: ${data.status}`);
-    }
-
-    return data.predictions || [];
+    return data || [];
   } catch (error) {
     console.error('Error getting place predictions:', error);
     throw error;

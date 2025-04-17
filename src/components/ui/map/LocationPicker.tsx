@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { MapPin } from 'lucide-react';
-import GoogleMapComponent from '@/components/maps/GoogleMap';
-import LocationInput from '@/components/maps/LocationInput';
+import LeafletMap from '@/components/maps/LeafletMap';
+import LocationSearchInput from '@/components/maps/LocationSearchInput';
 
 interface LocationPickerProps {
   onLocationSelect: (location: {
@@ -44,56 +44,75 @@ const LocationPicker = ({
   }, [initialLocation]);
 
   // Handle location selection from the map
-  const handleMapClick = (e: google.maps.MapMouseEvent) => {
-    if (e.latLng) {
-      const lat = e.latLng.lat();
-      const lng = e.latLng.lng();
+  const handleMapClick = (e: L.LeafletMouseEvent) => {
+    const { lat, lng } = e.latlng;
 
-      // Update location state
-      setLocation(prev => ({
-        ...prev,
-        latitude: lat,
-        longitude: lng
-      }));
+    // Update location state
+    setLocation(prev => ({
+      ...prev,
+      latitude: lat,
+      longitude: lng
+    }));
 
-      // Use Google Maps Geocoding API to get the address
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-        if (status === 'OK' && results && results[0]) {
-          const newAddress = results[0].formatted_address;
+    // Get address from coordinates using Nominatim
+    fetchAddressFromCoordinates(lat, lng);
+  };
 
-          // Update location with the new address
-          setLocation(prev => ({
-            ...prev,
-            address: newAddress
-          }));
-
-          // Notify parent component
-          onLocationSelect({
-            latitude: lat,
-            longitude: lng,
-            address: newAddress
-          });
+  // Fetch address from coordinates using Nominatim
+  const fetchAddressFromCoordinates = async (lat: number, lng: number) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            'Accept-Language': 'en-US,en;q=0.9',
+            'User-Agent': 'RoadsideAssistance/1.0'
+          }
         }
-      });
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data && data.display_name) {
+        const newAddress = data.display_name;
+
+        // Update location with the new address
+        setLocation(prev => ({
+          ...prev,
+          address: newAddress
+        }));
+
+        // Notify parent component
+        onLocationSelect({
+          latitude: lat,
+          longitude: lng,
+          address: newAddress
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching address:', error);
     }
   };
 
   // Handle location selection from the input
-  const handleLocationInputSelect = (selectedLocation: { address: string; coordinates: { lat: number; lng: number } }) => {
+  const handleLocationInputSelect = (selectedLocation: { address: string; coordinates: [number, number] }) => {
     const { address, coordinates } = selectedLocation;
+    const [lat, lng] = coordinates;
 
     // Update location state
     setLocation({
-      latitude: coordinates.lat,
-      longitude: coordinates.lng,
+      latitude: lat,
+      longitude: lng,
       address
     });
 
     // Notify parent component
     onLocationSelect({
-      latitude: coordinates.lat,
-      longitude: coordinates.lng,
+      latitude: lat,
+      longitude: lng,
       address
     });
   };
@@ -106,7 +125,7 @@ const LocationPicker = ({
     <div className="space-y-4">
       <div className="flex flex-col space-y-2">
         <Label htmlFor="search-location">Search Location</Label>
-        <LocationInput
+        <LocationSearchInput
           onLocationSelect={handleLocationInputSelect}
           placeholder="Enter address or landmark"
           initialValue={location.address}
@@ -115,15 +134,15 @@ const LocationPicker = ({
       </div>
 
       <div className="border rounded-md overflow-hidden">
-        <GoogleMapComponent
-          center={{ lat: location.latitude, lng: location.longitude }}
+        <LeafletMap
+          center={[location.latitude, location.longitude]}
           zoom={14}
           height="300px"
           markers={[{
             id: 'selected-location',
-            position: { lat: location.latitude, lng: location.longitude },
+            position: [location.latitude, location.longitude],
             title: 'Selected Location',
-            info: location.address
+            content: location.address
           }]}
           onClick={handleMapClick}
         />

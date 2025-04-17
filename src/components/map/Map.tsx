@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import GoogleMapComponent from '@/components/maps/GoogleMap';
+import LeafletMap from '@/components/maps/LeafletMap';
 
 interface MapProps {
   latitude?: number;
@@ -64,15 +64,15 @@ const Map = ({
 
   return (
     <div className="relative w-full h-full rounded-lg overflow-hidden border border-border shadow-sm">
-      <GoogleMapComponent
-        center={{ lat, lng }}
+      <LeafletMap
+        center={[lat, lng]}
         zoom={14}
         height={height}
         markers={[{
           id: 'location-marker',
-          position: { lat, lng },
+          position: [lat, lng],
           title: address || 'Selected Location',
-          info: address
+          content: address
         }]}
       />
     </div>
