@@ -8,13 +8,23 @@ require('dotenv').config();
 const app = express();
 
 // MongoDB Connection with proper error handling
-mongoose.connect(process.env.MONGODB_URI, {
+const mongoURI = process.env.MONGODB_URI;
+
+// Log the connection string (hiding credentials)
+const sanitizedURI = mongoURI.includes('@')
+  ? mongoURI.replace(/mongodb(\+srv)?:\/\/([^:]+):([^@]+)@/, 'mongodb$1://*****:*****@')
+  : 'mongodb://localhost:*****';
+console.log(`Connecting to MongoDB: ${sanitizedURI}`);
+
+mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+  serverSelectionTimeoutMS: 10000, // Timeout after 10s instead of 30s
   socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+  retryWrites: true,
+  w: 'majority' // Write concern for better reliability
 })
-.then(() => console.log('Connected to MongoDB'))
+.then(() => console.log('Connected to MongoDB successfully'))
 .catch(err => {
   console.error('MongoDB connection error:', err);
   process.exit(1); // Exit if cannot connect to database
