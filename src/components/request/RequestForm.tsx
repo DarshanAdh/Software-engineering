@@ -259,7 +259,7 @@ const RequestForm = ({ onLocationSelect }: RequestFormProps) => {
   // The handleUseCurrentLocation function is no longer needed as LocationPicker handles this
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full mx-auto">
       {step === 1 && (
         <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
           <div className="space-y-2">
@@ -267,7 +267,7 @@ const RequestForm = ({ onLocationSelect }: RequestFormProps) => {
             <p className="text-muted-foreground">Select the service you require</p>
           </div>
 
-          <RadioGroup value={selectedService || ""} onValueChange={setSelectedService} className="space-y-3">
+          <RadioGroup value={selectedService || ""} onValueChange={setSelectedService} className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {serviceTypes.map((service) => (
               <div key={service.id} className="flex">
                 <RadioGroupItem
@@ -314,7 +314,7 @@ const RequestForm = ({ onLocationSelect }: RequestFormProps) => {
               <p className="text-muted-foreground">Please provide your details so we can help you</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="fullName"
@@ -352,7 +352,7 @@ const RequestForm = ({ onLocationSelect }: RequestFormProps) => {
                 )}
               />
 
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-1 md:col-span-2">
                 <Label>Your Location</Label>
                 <LocationPicker
                   onLocationSelect={(loc) => {
@@ -393,7 +393,7 @@ const RequestForm = ({ onLocationSelect }: RequestFormProps) => {
                 control={form.control}
                 name="details"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-1 md:col-span-2">
                     <FormLabel>Additional Details</FormLabel>
                     <FormControl>
                       <Textarea

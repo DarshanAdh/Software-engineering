@@ -3,11 +3,15 @@
 import { Link } from 'react-router-dom';
 import { Twitter, Facebook, Instagram, Github, Linkedin } from 'lucide-react';
 
-const Footer = () => {
+interface FooterProps {
+  className?: string;
+}
+
+const Footer = ({ className = '' }: FooterProps) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-blue-900/80 backdrop-blur-sm border-t border-blue-800 py-6 text-white">
+    <footer className={`bg-blue-900/80 backdrop-blur-sm border-t border-blue-800 py-6 text-white ${className}`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div className="space-y-2">

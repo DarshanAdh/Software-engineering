@@ -86,6 +86,7 @@ app.use('/api/requests', require('./routes/requests'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/earnings', require('./routes/earnings'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/db', require('./routes/db-info'));
 // ... other routes
 
 // Error handling middleware
