@@ -23,27 +23,44 @@ const sanitizedURI = mongoURI && mongoURI.includes('@')
   ? mongoURI.replace(/mongodb(\+srv)?:\/\/([^:]+):([^@]+)@/, 'mongodb$1://*****:*****@')
   : 'mongodb://localhost:*****';
 console.log(`Netlify Function - Connecting to MongoDB: ${sanitizedURI}`);
+console.log(`Netlify Function - NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
 
 // Check if MongoDB URI is set
 if (!mongoURI) {
   console.error('MONGODB_URI environment variable is not set');
 }
 
-// Connect with better error handling
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 10000,
-  socketTimeoutMS: 45000,
-  retryWrites: true,
-  w: 'majority'
-})
-.then(() => {
-  console.log('Netlify Function - Connected to MongoDB successfully');
-})
-.catch(err => {
-  console.error('Netlify Function - MongoDB connection error:', err);
-  // Don't exit the process in serverless function
+// Connect with better error handling and retry logic
+const connectWithRetry = async (retryCount = 0, maxRetries = 3) => {
+  try {
+    await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Reduced timeout for faster feedback
+      socketTimeoutMS: 30000,
+      connectTimeoutMS: 5000,
+      retryWrites: true,
+      w: 'majority'
+    });
+    console.log('Netlify Function - Connected to MongoDB successfully');
+    return true;
+  } catch (err) {
+    console.error(`Netlify Function - MongoDB connection error (attempt ${retryCount + 1}/${maxRetries}):`, err);
+
+    if (retryCount < maxRetries - 1) {
+      console.log(`Netlify Function - Retrying connection in 1 second...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return connectWithRetry(retryCount + 1, maxRetries);
+    }
+
+    console.error('Netlify Function - All connection attempts failed');
+    return false;
+  }
+};
+
+// Start connection process
+connectWithRetry().catch(err => {
+  console.error('Netlify Function - Unhandled error in connection process:', err);
 });
 
 // CORS configuration
