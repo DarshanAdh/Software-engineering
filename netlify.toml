@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm install && cd netlify/functions && npm install express serverless-http mongoose cors dotenv bcryptjs jsonwebtoken express-rate-limit helmet moment ws && cd ../.. && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 

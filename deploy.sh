@@ -15,7 +15,13 @@ cd ..
 
 echo "Installing Netlify function dependencies..."
 cd netlify/functions
+
+# Ensure express and other dependencies are installed
+npm install express serverless-http mongoose cors dotenv bcryptjs jsonwebtoken express-rate-limit helmet moment ws
+
+# Install any other dependencies from package.json
 npm install
+
 cd ../..
 
 # Step 2: Build the frontend
