@@ -1,5 +1,15 @@
-export const API_BASE_URL = 'http://localhost:5001/api';
-export const FRONTEND_URL = 'http://localhost:8081';
+// Determine if we're in production or development
+const isProduction = import.meta.env.PROD;
+
+// Set the API base URL based on environment
+export const API_BASE_URL = isProduction
+  ? '/api' // In production, API requests will be handled by Netlify functions
+  : 'http://localhost:5001/api';
+
+// Set the frontend URL based on environment
+export const FRONTEND_URL = isProduction
+  ? window.location.origin
+  : 'http://localhost:8081';
 
 export const API_ENDPOINTS = {
   auth: {

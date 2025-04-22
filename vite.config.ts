@@ -17,12 +17,28 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Add alias for problematic package
+      "react-remove-scroll": path.resolve(__dirname, "node_modules/react-remove-scroll/dist/es5/index.js"),
     },
   },
   // Add cache control
   optimizeDeps: {
-    force: true
+    force: true,
+    include: [
+      // Include problematic packages
+      'react-remove-scroll',
+      '@radix-ui/react-dialog',
+    ],
   },
   // Clear cache on startup
   clearScreen: false,
+  // Increase build performance
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+    sourcemap: false,
+    // Reduce chunk size warnings
+    chunkSizeWarningLimit: 1000,
+  },
 });
