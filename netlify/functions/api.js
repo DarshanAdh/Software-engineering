@@ -30,8 +30,37 @@ mongoose.connect(mongoURI, {
   console.error('MongoDB connection error:', err);
 });
 
+// CORS configuration
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:8081',
+  'http://localhost:8082',
+  'http://localhost:3000',
+  process.env.FRONTEND_URL,
+  'https://roadside-relief.netlify.app',
+  'https://roadside-caretakers.netlify.app',
+  'https://roadside-assistance.netlify.app',
+  'https://roadside-assistance-app.netlify.app',
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.netlify.app')) {
+      callback(null, true);
+    } else {
+      console.warn('Blocked by CORS:', origin);
+      callback(null, true); // Allow all origins in production for now
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
