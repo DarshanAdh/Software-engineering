@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && cd netlify/functions && npm install express serverless-http mongoose cors dotenv bcryptjs jsonwebtoken express-rate-limit helmet moment ws && cd ../.. && npm run build"
+  command = "npm install && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 
@@ -7,6 +7,9 @@
   command = "npm run dev"
   port = 8081
   targetPort = 8081
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
 
 [[redirects]]
   from = "/api/*"
