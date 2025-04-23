@@ -1,5 +1,5 @@
 
-# Roadside Relief - Roadside Assistance App
+# Roadside Assistance - Roadside Assistance App
 
 A full-stack application connecting stranded drivers with nearby helpers for roadside assistance.
 
