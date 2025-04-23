@@ -10,7 +10,6 @@
     "client": "rm -rf node_modules/.vite && vite",
     "start": "npm run dev:concurrent",
     "dev:concurrent": "concurrently \"npm run server\" \"npm run client\"",
-
     "build": "npm install typescript && npx tsc --skipLibCheck && vite build",
     "build:netlify": "chmod +x netlify-build-simple.sh && ./netlify-build-simple.sh",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
