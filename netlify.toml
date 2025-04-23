@@ -1,5 +1,5 @@
 [build]
-  command = "chmod +x build-no-check.sh && ./build-no-check.sh"
+  command = "npm run build:netlify"
   publish = "dist"
   functions = "netlify/functions"
 

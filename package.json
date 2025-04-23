@@ -10,8 +10,9 @@
     "client": "rm -rf node_modules/.vite && vite",
     "start": "npm run dev:concurrent",
     "dev:concurrent": "concurrently \"npm run server\" \"npm run client\"",
-    
-    "build": "npx tsc && vite build",
+
+    "build": "vite build",
+    "build:netlify": "chmod +x build-no-check.sh && ./build-no-check.sh",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

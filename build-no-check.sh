@@ -24,6 +24,6 @@ set -e  # Exit immediately if a command exits with a non-zero status
 
 # Run Vite build directly (it will handle TypeScript transpilation without type checking)
 echo "Running Vite build..."
-NODE_ENV=production VITE_SKIP_TS_CHECK=true ./node_modules/.bin/vite build --mode production
+NODE_ENV=production VITE_SKIP_TS_CHECK=true npx vite build --mode production
 
 echo "===== Build process completed ====="
