@@ -1,10 +1,16 @@
 console.log('Starting server initialization...');
 
 try {
+  console.log('Inside try block...');
+  console.log('Loading express...');
   const express = require('express');
+  console.log('Loading cors...');
   const cors = require('cors');
+  console.log('Loading mongoose...');
   const mongoose = require('mongoose');
+  console.log('Loading http...');
   const http = require('http');
+  console.log('Loading WebSocket...');
   const WebSocket = require('ws');
 
   console.log('Modules loaded successfully');
