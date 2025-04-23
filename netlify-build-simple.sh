@@ -9,6 +9,8 @@ set -e  # Exit immediately if a command exits with a non-zero status
 
 # Install dependencies including TypeScript
 echo "Installing dependencies..."
+export NODE_VERSION=18.17.1
+
 npm install --legacy-peer-deps
 npm install typescript --no-save
 

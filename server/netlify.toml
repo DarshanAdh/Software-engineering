@@ -12,4 +12,3 @@
 [build.environment]
   NODE_ENV = "production"
   NODE_VERSION = "18.17.1"
-  GO_VERSION = "none"
