@@ -3,6 +3,13 @@
   publish = "dist"
   functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "18.17.1"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[functions]
+  node_bundler = "esbuild"
+
 [dev]
   command = "npm run dev"
   port = 8888
