@@ -1,54 +1,72 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const http = require('http');
-const WebSocket = require('ws');
-require('dotenv').config();
+console.log('Starting server initialization...');
 
-const app = express();
+try {
+  const express = require('express');
+  const cors = require('cors');
+  const mongoose = require('mongoose');
+  const http = require('http');
+  const WebSocket = require('ws');
 
-// MongoDB Connection with proper error handling
-const mongoURI = process.env.MONGODB_URI;
+  console.log('Modules loaded successfully');
 
-// Log the connection string (hiding credentials)
-const sanitizedURI = mongoURI.includes('@')
-  ? mongoURI.replace(/mongodb(\+srv)?:\/\/([^:]+):([^@]+)@/, 'mongodb$1://*****:*****@')
-  : 'mongodb://localhost:*****';
-console.log(`Connecting to MongoDB: ${sanitizedURI}`);
+  // Load environment variables
+  require('dotenv').config();
 
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 10000, // Timeout after 10s instead of 30s
-  socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
-  retryWrites: true,
-  w: 'majority' // Write concern for better reliability
-})
-.then(() => console.log('Connected to MongoDB successfully'))
-.catch(err => {
-  console.error('MongoDB connection error:', err);
-  process.exit(1); // Exit if cannot connect to database
-});
+  // Log environment variables (hiding sensitive data)
+  console.log('Environment variables loaded:');
+  console.log('PORT:', process.env.PORT || '5001 (default)');
+  console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Set (value hidden)' : 'Not set');
+  console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'Set (value hidden)' : 'Not set');
+  console.log('NODE_ENV:', process.env.NODE_ENV || 'Not set (development by default)');
+  const app = express();
 
-// Handle MongoDB connection errors after initial connection
-mongoose.connection.on('error', err => {
-  console.error('MongoDB connection error:', err);
-});
+  // MongoDB Connection with proper error handling
+  const mongoURI = process.env.MONGODB_URI;
 
-mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected. Attempting to reconnect...');
-});
+  if (!mongoURI) {
+    console.error('MONGODB_URI environment variable is not set!');
+    process.exit(1);
+  }
 
-// CORS configuration
-const allowedOrigins = [
-  'http://localhost:8080',
-  'http://localhost:8081',
-  'http://localhost:8082',
-  'http://localhost:3000',
-  process.env.FRONTEND_URL,
-];
+  // Log the connection string (hiding credentials)
+  const sanitizedURI = mongoURI.includes('@')
+    ? mongoURI.replace(/mongodb(\+srv)?:\/\/([^:]+):([^@]+)@/, 'mongodb$1://*****:*****@')
+    : 'mongodb://localhost:*****';
+  console.log(`Connecting to MongoDB: ${sanitizedURI}`);
 
-app.use(cors({
+  mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 10000, // Timeout after 10s instead of 30s
+    socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+    retryWrites: true,
+    w: 'majority' // Write concern for better reliability
+  })
+  .then(() => console.log('Connected to MongoDB successfully'))
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit if cannot connect to database
+  });
+
+  // Handle MongoDB connection errors after initial connection
+  mongoose.connection.on('error', err => {
+    console.error('MongoDB connection error:', err);
+  });
+
+  mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected. Attempting to reconnect...');
+  });
+
+  // CORS configuration
+  const allowedOrigins = [
+    'http://localhost:8080',
+    'http://localhost:8081',
+    'http://localhost:8082',
+    'http://localhost:3000',
+    process.env.FRONTEND_URL,
+  ];
+
+  app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
@@ -149,8 +167,44 @@ wss.broadcast = function broadcast(data) {
 };
 
 // Start server
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`API available at http://localhost:${PORT}`);
-  console.log(`WebSocket server available at ws://localhost:${PORT}/ws`);
+console.log(`Attempting to start server on port ${PORT}...`);
+
+try {
+  server.listen(PORT, () => {
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`✅ API available at http://localhost:${PORT}`);
+    console.log(`✅ WebSocket server available at ws://localhost:${PORT}/ws`);
+    console.log('Server started successfully!');
+  });
+} catch (error) {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+}
+
+// Handle process termination
+process.on('SIGINT', () => {
+  console.log('Received SIGINT. Shutting down gracefully...');
+  server.close(() => {
+    console.log('Server closed.');
+    mongoose.connection.close(false, () => {
+      console.log('MongoDB connection closed.');
+      process.exit(0);
+    });
+  });
 });
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // Attempt to close server & database gracefully
+  server.close(() => {
+    mongoose.connection.close(false, () => {
+      console.error('Server and MongoDB connection closed due to uncaught exception');
+      process.exit(1);
+    });
+  });
+});
+
+} catch (error) {
+  console.error('Fatal error during server initialization:', error);
+  process.exit(1);
+}

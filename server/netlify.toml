@@ -1,0 +1,13 @@
+[build]
+  command = "npm install"
+  functions = "netlify/functions"
+  publish = "."
+
+[functions]
+  node_bundler = "esbuild"
+
+[dev]
+  port = 5001
+
+[build.environment]
+  NODE_ENV = "production"
