@@ -6,6 +6,10 @@
 [build.environment]
   NODE_VERSION = "18.17.1"
   GO_VERSION = "none"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[functions]
+  node_bundler = "esbuild"
 
 [dev]
   command = "npm run dev"

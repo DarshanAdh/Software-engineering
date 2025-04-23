@@ -1,66 +1,40 @@
+// Serverless function for Netlify
 const express = require('express');
 const serverless = require('serverless-http');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// Import routes
-const authRoutes = require('../../server/routes/auth');
-const helpersRoutes = require('../../server/routes/helpers');
-const requestsRoutes = require('../../server/routes/requests');
-const usersRoutes = require('../../server/routes/users');
-const earningsRoutes = require('../../server/routes/earnings');
-const adminRoutes = require('../../server/routes/admin');
-const dbInfoRoutes = require('../../server/routes/db-info');
+// Log environment variables (hiding sensitive data)
+console.log('Environment variables loaded in serverless function:');
+console.log('PORT:', process.env.PORT || '5001 (default)');
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Set (value hidden)' : 'Not set');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'Set (value hidden)' : 'Not set');
+console.log('NODE_ENV:', process.env.NODE_ENV || 'Not set (development by default)');
 
 const app = express();
 
 // MongoDB Connection
 const mongoURI = process.env.MONGODB_URI;
 
-// Log the connection string (hiding credentials)
-const sanitizedURI = mongoURI && mongoURI.includes('@')
-  ? mongoURI.replace(/mongodb(\+srv)?:\/\/([^:]+):([^@]+)@/, 'mongodb$1://*****:*****@')
-  : 'mongodb://localhost:*****';
-console.log(`Netlify Function - Connecting to MongoDB: ${sanitizedURI}`);
-console.log(`Netlify Function - NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
-
-// Check if MongoDB URI is set
 if (!mongoURI) {
-  console.error('MONGODB_URI environment variable is not set');
+  console.error('MONGODB_URI environment variable is not set!');
+  // In serverless context, we can't exit the process
+  // Instead, we'll continue but the app won't work correctly
 }
 
-// Connect with better error handling and retry logic
-const connectWithRetry = async (retryCount = 0, maxRetries = 3) => {
-  try {
-    await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Reduced timeout for faster feedback
-      socketTimeoutMS: 30000,
-      connectTimeoutMS: 5000,
-      retryWrites: true,
-      w: 'majority'
-    });
-    console.log('Netlify Function - Connected to MongoDB successfully');
-    return true;
-  } catch (err) {
-    console.error(`Netlify Function - MongoDB connection error (attempt ${retryCount + 1}/${maxRetries}):`, err);
-
-    if (retryCount < maxRetries - 1) {
-      console.log(`Netlify Function - Retrying connection in 1 second...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return connectWithRetry(retryCount + 1, maxRetries);
-    }
-
-    console.error('Netlify Function - All connection attempts failed');
-    return false;
-  }
-};
-
-// Start connection process
-connectWithRetry().catch(err => {
-  console.error('Netlify Function - Unhandled error in connection process:', err);
+// Connect to MongoDB
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+  retryWrites: true,
+  w: 'majority'
+})
+.then(() => console.log('Connected to MongoDB successfully in serverless function'))
+.catch(err => {
+  console.error('MongoDB connection error in serverless function:', err);
 });
 
 // CORS configuration
@@ -69,7 +43,6 @@ const allowedOrigins = [
   'http://localhost:8081',
   'http://localhost:8082',
   'http://localhost:3000',
-  process.env.FRONTEND_URL,
   'https://roadside-relief.netlify.app',
   'https://roadside-caretakers.netlify.app',
   'https://roadside-assistance.netlify.app',
@@ -92,6 +65,9 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Security middleware
+app.use(require('helmet')());
 
 // Middleware
 app.use(express.json());
@@ -122,19 +98,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/helpers', helpersRoutes);
-app.use('/api/requests', requestsRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/earnings', earningsRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/db', dbInfoRoutes);
+// Root route for testing
+app.get('/', (req, res) => {
+  res.json({ message: 'Roadside Assistance API is running in serverless mode' });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Netlify Function - Error:', err.message);
-  console.error('Netlify Function - Stack:', err.stack);
+  console.error(err.stack);
 
   if (err.name === 'UnauthorizedError') {
     return res.status(401).json({
@@ -154,23 +125,12 @@ app.use((err, req, res, next) => {
     });
   }
 
-  if (err.name === 'MongoError' || err.name === 'MongoServerError') {
-    console.error('Netlify Function - MongoDB Error:', err);
-    return res.status(500).json({
-      status: 'error',
-      message: 'Database error occurred',
-      error: err.message
-    });
-  }
-
-  // Always return detailed error information in Netlify Functions for debugging
   res.status(err.status || 500).json({
     status: 'error',
-    message: err.message || 'Something went wrong!',
-    stack: err.stack,
-    name: err.name
+    message: process.env.NODE_ENV === 'production' ? 'Something went wrong!' : err.message,
+    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
   });
 });
 
-// Export the serverless function
+// Export the serverless handler
 module.exports.handler = serverless(app);
