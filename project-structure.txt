@@ -1,0 +1,32 @@
+Roadside Assistance Project Structure (development branch)
+==================================================
+
+root/
+├── client/                 # Frontend React application
+│   ├── public/             # Static assets
+│   ├── src/                # React source code
+│   │   ├── components/     # UI components
+│   │   ├── config/         # Configuration files
+│   │   ├── contexts/       # React context providers
+│   │   ├── hooks/          # Custom React hooks
+│   │   ├── lib/            # Utility functions
+│   │   ├── pages/          # Page components
+│   │   └── services/       # API services
+│   ├── .env                # Environment variables
+│   ├── package.json        # Frontend dependencies
+│   └── [config files]      # Various configuration files
+│
+├── server/                 # Backend Express application
+│   ├── controllers/        # Route controllers
+│   ├── middleware/         # Express middleware
+│   ├── models/             # Mongoose models
+│   ├── routes/             # Express routes
+│   ├── scripts/            # Utility scripts
+│   ├── services/           # Backend services
+│   ├── .env                # Environment variables
+│   ├── package.json        # Backend dependencies
+│   └── server.js           # Main server file
+│
+├── package.json            # Root package.json with scripts
+├── README.md               # Project documentation
+└── [other docs & scripts]  # Various documentation and utility scripts
