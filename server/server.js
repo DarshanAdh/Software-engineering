@@ -70,6 +70,11 @@ try {
     'http://localhost:8082',
     'http://localhost:3000',
     process.env.FRONTEND_URL,
+    // Netlify domains
+    'https://roadside-assistance.netlify.app',
+    'https://roadside-assistance-app.netlify.app',
+    // Allow all Netlify deploy previews
+    /https:\/\/[a-z0-9-]+--roadside-assistance(-[a-z0-9]+)?\.netlify\.app/,
   ];
 
   app.use(cors({
@@ -77,12 +82,23 @@ try {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
 
+    // Check exact matches
     if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.warn('Blocked by CORS:', origin);
-      callback(new Error('Not allowed by CORS'));
+      return callback(null, true);
     }
+
+    // Check regex patterns
+    const matchesPattern = allowedOrigins.some(allowedOrigin => {
+      return allowedOrigin instanceof RegExp && allowedOrigin.test(origin);
+    });
+
+    if (matchesPattern) {
+      return callback(null, true);
+    }
+
+    // If we get here, origin is not allowed
+    console.warn('Blocked by CORS:', origin);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

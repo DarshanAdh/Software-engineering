@@ -1,0 +1,15 @@
+[build]
+  # Directory to publish (relative to root of your repo)
+  publish = "dist"
+  # Default build command
+  command = "npm run build"
+
+# Redirects and rewrites
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  # Set Node version
+  NODE_VERSION = "18"
