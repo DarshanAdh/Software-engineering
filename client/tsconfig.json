@@ -20,13 +20,20 @@
     "noUnusedParameters": false,
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
+    "noImplicitReturns": false,
+    "noErrorTruncation": true,
 
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
     "allowJs": true,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "ignoreDeprecations": "5.0",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": false
   },
-  "include": ["src", "vite.config.ts"]
+  "include": ["src", "vite.config.ts"],
+  "exclude": ["node_modules"]
 }
