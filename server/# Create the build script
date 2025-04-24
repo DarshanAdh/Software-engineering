@@ -1,0 +1,17 @@
+# Create the build script
+cat > netlify-build.sh << 'EOL'
+#!/bin/bash
+echo "Installing dependencies..."
+npm install
+
+echo "Installing function dependencies..."
+cd netlify/functions
+npm install
+cd ../..
+
+echo "Building frontend..."
+npx tsc && vite build
+EOL
+
+# Make it executable
+chmod +x netlify-build.sh

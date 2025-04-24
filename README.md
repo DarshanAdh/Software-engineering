@@ -161,29 +161,41 @@ Stores all assistance requests.
 ## Setup Instructions
 
 1. Clone the repository
-2. Install dependencies:
+
+2. Install all dependencies:
    ```
-   npm install
-   cd server && npm install
+   npm run install:all
    ```
+
 3. Set up MongoDB:
    - Create a MongoDB database (local or Atlas)
    - Configure connection string in server/.env file
 
 4. Create `.env` file in the server directory:
    ```
-   PORT=5000
+   PORT=5001
    MONGODB_URI=your_mongodb_connection_string
    JWT_SECRET=your_secure_jwt_secret
+   NODE_ENV=development
    ```
 
-5. Start the backend server:
+5. Create `.env` file in the client directory:
    ```
-   cd server
-   npm start
+   VITE_API_URL=http://localhost:5001
    ```
 
-6. Start the frontend development server:
+6. Start both frontend and backend in development mode:
    ```
    npm run dev
    ```
+
+7. Or start them separately:
+   ```
+   # Start only the backend
+   npm run server
+
+   # Start only the frontend
+   npm run client
+   ```
+
+For more details on the project structure, see [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
