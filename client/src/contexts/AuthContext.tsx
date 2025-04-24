@@ -262,7 +262,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const approveHelper = async (helperId: string) => {
+  const approveHelper = async (helperId: string): Promise<void> => {
     setLoading(true);
     try {
       const response = await fetch(`${API_ENDPOINTS.admin.approveHelper}/${helperId}`, {
@@ -275,22 +275,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok) {
         toast.success('Helper approved successfully');
-        return true;
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || 'Failed to approve helper');
-        return false;
       }
     } catch (error) {
       console.error('Approve helper error:', error);
       toast.error('An error occurred while approving the helper');
-      return false;
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteUser = async (userId: string) => {
+  const deleteUser = async (userId: string): Promise<void> => {
     setLoading(true);
     try {
       const response = await fetch(`${API_ENDPOINTS.admin.deleteUser}/${userId}`, {
@@ -302,16 +299,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok) {
         toast.success('User deleted successfully');
-        return true;
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || 'Failed to delete user');
-        return false;
       }
     } catch (error) {
       console.error('Delete user error:', error);
       toast.error('An error occurred while deleting the user');
-      return false;
     } finally {
       setLoading(false);
     }

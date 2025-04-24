@@ -73,10 +73,13 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
         zoom={zoom}
         style={mapStyle}
         scrollWheelZoom={true}
-        whenReady={(map) => {
-          // Add click event listener to the map
-          if (onClick) {
-            map.target.on('click', handleMapClick);
+        // Use eventHandlers instead of whenReady for TypeScript compatibility
+        eventHandlers={{
+          load: (e) => {
+            // Add click event listener to the map
+            if (onClick) {
+              e.target.on('click', handleMapClick);
+            }
           }
         }}
       >

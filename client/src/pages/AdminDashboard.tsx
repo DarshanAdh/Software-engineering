@@ -160,27 +160,23 @@ const AdminDashboard = () => {
 
   // Handle helper approval
   const handleApproveHelper = async (helperId: string) => {
-    const success = await approveHelper(helperId);
-    if (success) {
-      // Refresh the pending helpers list
-      fetchPendingHelpers();
-      // Refresh all users list
-      fetchAllUsers();
-    }
+    await approveHelper(helperId);
+    // Refresh the pending helpers list
+    fetchPendingHelpers();
+    // Refresh all users list
+    fetchAllUsers();
   };
 
   // Handle user deletion
   const handleDeleteUser = async (userId: string) => {
     if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      const success = await deleteUser(userId);
-      if (success) {
-        // Refresh the users list
-        fetchAllUsers();
-        // If we were viewing this user's history, clear it
-        if (selectedUserId === userId) {
-          setUserHistory([]);
-          setSelectedUserId(null);
-        }
+      await deleteUser(userId);
+      // Refresh the users list
+      fetchAllUsers();
+      // If we were viewing this user's history, clear it
+      if (selectedUserId === userId) {
+        setUserHistory([]);
+        setSelectedUserId(null);
       }
     }
   };

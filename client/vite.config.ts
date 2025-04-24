@@ -55,12 +55,5 @@ export default defineConfig({
   // Disable type checking during build
   esbuild: {
     logOverride: { 'this-is-undefined-in-esm': 'silent' },
-    // Skip type checking
-    tsconfigRaw: {
-      compilerOptions: {
-        skipLibCheck: true,
-        skipDefaultLibCheck: true,
-      },
-    },
   },
 });
