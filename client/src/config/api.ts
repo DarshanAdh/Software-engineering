@@ -3,7 +3,7 @@ const isProduction = import.meta.env.PROD;
 
 // Set the API base URL based on environment
 export const API_BASE_URL = isProduction
-  ? '/api' // In production, API requests will be handled by Netlify functions
+  ? `${import.meta.env.VITE_API_URL || 'https://software-engineering-j3aa.onrender.com'}/api` // Use Render backend in production
   : 'http://localhost:5001/api';
 
 // Set the frontend URL based on environment

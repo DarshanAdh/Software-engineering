@@ -73,8 +73,16 @@ try {
     // Netlify domains
     'https://roadside-assistance.netlify.app',
     'https://roadside-assistance-app.netlify.app',
+    'https://roadsideassist.netlify.app',
     // Allow all Netlify deploy previews
     /https:\/\/[a-z0-9-]+--roadside-assistance(-[a-z0-9]+)?\.netlify\.app/,
+    /https:\/\/[a-z0-9-]+--roadsideassist(-[a-z0-9]+)?\.netlify\.app/,
+    // Render domains
+    'https://roadside-assistance-api.onrender.com',
+    'https://software-engineering-j3aa.onrender.com',
+    // Allow all Render preview environments
+    /https:\/\/roadside-assistance-api(-[a-z0-9]+)?\.onrender\.com/,
+    /https:\/\/software-engineering(-[a-z0-9]+)?\.onrender\.com/,
   ];
 
   app.use(cors({
